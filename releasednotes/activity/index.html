@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="robots" content="noindex">
+    <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
+    <title>Activity | Released Notes</title>
+    <style>
+      * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-smoothing: antialiased;
+      }
+
+      body {
+        background-color: #FAFAFA;
+        color: #212121;
+        font-family: Inter, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.5;
+        margin: 0;
+      }
+
+      header {
+        border-bottom: 1px solid #E0E0E0;
+        height: 80px;
+        padding-top: 16px;
+        margin-bottom: 62px;
+      }
+
+      header .logo {
+        background: #212121;
+        border-radius: 4px;
+        height: 48px;
+        margin: 0 auto;
+        width: 48px;
+      }
+      
+      /* POST */
+      section {
+        border-bottom: 1px solid #E0E0E0;
+        margin: 0 auto;
+        padding: 96px 156px 96px 156px;
+        width: 886px;
+      }
+
+      section:last-child {
+        border-bottom: none;
+      }
+
+      section h2 {
+        font-size: 32px;
+        margin: 0 0 32px 0;
+      }
+
+      section p {
+        font-size: 17px;
+      }
+
+      section time {
+        color: #707070;
+        display: inline-block;
+      }
+
+      section a {
+        color: #3d7ed4;
+        text-decoration: none;
+      }
+
+      section a:hover {
+        text-decoration: underline;
+      }
+
+      section .meta {
+        display: -ms-grid;
+        display: grid;
+        -webkit-box-pack: justify;
+        -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        grid-auto-columns: 1fr;
+        grid-column-gap: 16px;
+        grid-row-gap: 16px;
+        -ms-grid-columns: 1fr -webkit-max-content;
+        -ms-grid-columns: 1fr max-content;
+        grid-template-columns: 1fr -webkit-max-content;
+        grid-template-columns: 1fr max-content;
+        -ms-grid-rows: auto;
+        grid-template-rows: auto;
+      }
+
+      section .meta .author {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+      }
+
+      section .meta .author img {
+        border-radius: 100%;
+        border: 0;
+        vertical-align: middle;
+        display: inline-block;
+        max-width: 100%;
+      }
+
+      section .meta .author .details {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        margin-left: 0.75rem;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        -webkit-justify-content: space-around;
+        -ms-flex-pack: distribute;
+        justify-content: space-around;
+        -webkit-box-align: start;
+        -webkit-align-items: flex-start;
+        -ms-flex-align: start;
+        align-items: flex-start;
+        font-size: 14px;
+      }
+
+      section .meta .author .details span {
+        color: #707070;
+      }
+
+      /* tags */
+      .tags {
+        list-style: none;
+        margin: 0px 0 8px 0px;
+        padding: 0;
+      }
+      .tags li {
+        border-radius: 4px;
+        display: inline-block;
+        margin: 0px 8px 0 0;
+        padding: 2px 8px;
+      }
+      .feature {
+        background-color: rgba(40,96,225,.1);
+        color: #2860e1;
+      }
+      .product {
+        background-color: rgba(0,188,166,.1);
+        color: #01a390;
+      }
+      .design {
+        background-color: rgba(156,89,223,.1);
+        color: #9c59df;
+      }
+      .roadblock {}
+
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo"></div>
+    </header>
+
+    <section>
+      <ul class="tags">
+        <li class="product">Product</li>
+        <li class="feature">Feature</li>
+        <li class="design">Design</li>
+      </ul>
+        <h2>Second Update</h2>
+        <p>
+          This is an example of what a second post would look like. I've only added this so that I can continue to build out the design 
+          and code of this site. Lots will change, if I can be bothered, but I had some spare time this afternoon and you did say that 
+          that the ball was in my court. So now I've sort of hit it back towards you but it's not quite over the net.
+        </p>
+        <div class="meta">
+          <div class="author">
+            <img src="https://pbs.twimg.com/profile_images/961115222957281280/ozNpKVzA_400x400.jpg" width="40" height="40" />
+            <div class="details">
+              Jack Osborne
+              <span>Product Designer</span>
+            </div>
+          </div>
+          <time>September 21st, 2022</time>
+        </div>
+    </section>
+
+    <section>
+      <ul class="tags">
+        <li class="product">Product</li>
+      </ul>
+        <h2>The Kick Off</h2>
+        <p>
+          The ramblings of two men as they try to get their 
+          <a href="https://docs.google.com/document/d/1D7jHj3mTqw-U4fA2WfQHbK2oG1ZEat8_Io0fhOYtVMQ/edit">first project</a> 
+          off the ground. We talk about the basis of an idea and the avenues we could go down, while there's nothing jumping 
+          off the canvas there are a few ideas worth investigating.
+        </p>
+        <div class="meta">
+          <div class="author">
+            <img src="https://pbs.twimg.com/profile_images/1567382074503434240/ju2_L9aB_400x400.jpg" width="40" height="40" />
+            <div class="details">
+              Avneesh Kohli
+              <span>Product Manager</span>
+            </div>
+          </div>
+          <time>September 20th, 2022</time>
+        </div>
+    </section>
+  </body>
+</html>
