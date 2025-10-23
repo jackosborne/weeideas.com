@@ -1,0 +1,76 @@
+/* =========
+   Ripple Box (component-scoped)
+   Usage: <div class="ripple-box">…</div>
+   ========= */
+
+   .ripple-box {
+    /* ---- Design tokens (override per instance if needed) ---- */
+    --rb-bg: #b73d48;                /* background colour */
+    --rb-radius: 16px;               /* corner radius */
+    --rb-shadow: 0 8px 40px rgba(0,0,0,.12);
+  
+    /* ---- Core box ---- */
+    position: relative;
+    isolation: isolate;              /* contain blending/effects */
+    display: block;
+    inline-size: 400px;              /* was width: 400px; */
+    block-size: 400px;               /* was height: 400px; */
+    max-inline-size: 100%;           /* let it shrink on small screens */
+    overflow: hidden;
+    background: var(--rb-bg);
+    border-radius: var(--rb-radius);
+    box-shadow: var(--rb-shadow);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;              /* JS can manage gestures precisely */
+    will-change: transform;          /* common with ripple shaders */
+  }
+  
+  /* Prefer a responsive square; uncomment if you want fluid height:
+  .ripple-box {
+    inline-size: min(100%, 400px);
+    aspect-ratio: 1;
+    block-size: auto;
+  }
+  */
+  
+  /* Optional: dark mode tweak (keeps contrast in darker UIs) */
+  @media (prefers-color-scheme: dark) {
+    .ripple-box {
+      --rb-bg: color-mix(in oklab, var(--rb-bg) 85%, black);
+      --rb-shadow: 0 8px 40px rgba(0,0,0,.5);
+    }
+  }
+  
+  /* If the box is interactive (click/hover), add this class */
+  .ripple-box.is-interactive {
+    cursor: pointer;
+  }
+  
+  /* Keyboard focus ring for a11y (apply via tabindex or a button wrapper) */
+  .ripple-box:focus-visible {
+    outline: 2px solid #7aa2ff;      /* match your accent */
+    outline-offset: 3px;
+  }
+  
+  /* Children that should fill the box (e.g. <canvas>, <img>, <video>) */
+  .ripple-box > canvas,
+  .ripple-box > img,
+  .ripple-box > video {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;               /* preserve imagery if used */
+    display: block;
+  }
+  
+  /* If you render a foreground overlay (e.g. gloss/noise), slot it above */
+  .ripple-box > .overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    mix-blend-mode: normal;
+  }
+  
+  /* Respect reduced motion: your JS can add/remove animation*
+  

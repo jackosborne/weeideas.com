@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content="Eleventy">
+    <meta name="robots" content="index, follow">
+    {% include "partials/meta.html" %}
+    <link rel="stylesheet" href="/_/css/style.css" />
+    {% if css %}
+      {% for href in css %}
+        <link rel="stylesheet" href="{{ page.url }}{{ href | url }}">
+      {% endfor %}
+    {% endif %}
+  </head>
+  {% if page.url == '/' %}
+    {% assign bodyId = 'home' %}
+  {% else %}
+    {% assign bodyId = 'project' %}
+  {% endif %}
+  <body id="{{ bodyId }}" class="wrap">
+    <header>
+      {% include "partials/header.html" %}
+    </header>
+    <main id="main">
+        {{ content }}
+    </main>
+    <footer>
+      {% include "partials/footer.html" %}
+    </footer>
+    {% if js %}
+      {% for src in js %}
+        <script src="{{ page.url }}{{ src | url }}" type="module" defer></script>
+      {% endfor %}
+    {% endif %}
+  </body>
+</html>

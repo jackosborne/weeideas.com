@@ -1,0 +1,14 @@
+# Node / Eleventy
+node_modules/
+.npm/
+.npmrc
+
+# Eleventy cache (if used)
+.cache/
+
+# Build output (GitHub Actions will build this for Pages)
+_site/
+
+# Local env files (if you ever add them)
+.env
+.env.*

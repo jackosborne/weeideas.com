@@ -1,0 +1,32 @@
+The Humans Responsible & Colophon
+humanstxt.org
+
+/* TEAM */
+Developer: Jack Osborne
+Designer: Jack Osborne
+Website: https://jackosborne.com
+Contact: jack.osborne@gmail.com
+
+/* SITE */
+- Standards
+  - HTML (https://www.w3.org/TR/html5/)
+  - CSS (https://www.w3.org/TR/2001/WD-css3-roadmap-20010523/)
+  - JavaScript (https://www.javascript.com/)
+  - Markdown (https://daringfireball.net/projects/markdown/)
+  - SVG (https://www.w3.org/TR/SVG/)
+
+- Components
+  - Git (https://git-scm.com/)
+  - GitHub (https://github.com/)
+  - Node.js (https://nodejs.org/en/)
+  - Eleventy (https://www.11ty.dev/)
+
+- Software and Services
+  - MacOS (https://www.apple.com/macos/)
+  - Figma (https://www.figma.com/)
+  - Visual Code Studio (https://code.visualstudio.com/)
+  - iA Writer (https://ia.net/writer)
+  - ChatGPT (https://chatgpt.com/)
+
+/* NOTE */
+- This site is hand-built. No templates, no shortcuts.

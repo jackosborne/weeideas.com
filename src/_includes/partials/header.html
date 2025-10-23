@@ -1,0 +1,27 @@
+<a class="skip-link" href="#main">Skip to content</a>
+
+{% if page.url == '/' %}
+  <h1>
+    <span class="visually-hidden">{{ site.title }}</span>
+    <svg width="236" height="156" viewBox="0 0 236 156" aria-hidden="true" focusable="false">
+      <rect width="236" height="156" fill="none"></rect>
+      <path class="piece p1" d="M62.7199 8H17.2801C12.6295 8 9.27181 12.4513 10.5494 16.9231L46.5494 142.923C47.408 145.928 50.1547 148 53.2801 148H98.7199C103.371 148 106.728 143.549 105.451 139.077L69.4506 13.077C68.592 10.0718 65.8453 8 62.7199 8Z" fill="var(--text)"></path>
+      <path class="piece p2" d="M142.72 8H97.2801C92.6295 8 89.2718 12.4513 90.5494 16.9231L126.549 142.923C127.408 145.928 130.155 148 133.28 148H178.72C183.371 148 186.728 143.549 185.451 139.077L149.451 13.077C148.592 10.0718 145.845 8 142.72 8Z" fill="var(--text)"></path>
+      <path class="piece p3" d="M191.447 92.4927L170.462 16.8718C169.224 12.4118 172.579 8 177.207 8H218.833C223.449 8 226.802 12.3899 225.586 16.8433L204.945 92.4641C203.072 99.3247 193.349 99.3453 191.447 92.4927Z" fill="var(--text)"></path>
+    </svg>
+  </h1>
+  <p class="small">{{ site.tagline }}</p>
+{% else %}
+  <div>
+    <a class="brand" href="{{ '/' | url }}" aria-label="{{ site.title }} — home" title="Back to homepage">
+      <span class="visually-hidden">{{ site.title }}</span>
+      <svg width="236" height="156" viewBox="0 0 236 156" aria-hidden="true" focusable="false">
+        <rect width="236" height="156" fill="none"></rect>
+        <path class="piece p1" d="M62.7199 8H17.2801C12.6295 8 9.27181 12.4513 10.5494 16.9231L46.5494 142.923C47.408 145.928 50.1547 148 53.2801 148H98.7199C103.371 148 106.728 143.549 105.451 139.077L69.4506 13.077C68.592 10.0718 65.8453 8 62.7199 8Z" fill="var(--text)"></path>
+        <path class="piece p2" d="M142.72 8H97.2801C92.6295 8 89.2718 12.4513 90.5494 16.9231L126.549 142.923C127.408 145.928 130.155 148 133.28 148H178.72C183.371 148 186.728 143.549 185.451 139.077L149.451 13.077C148.592 10.0718 145.845 8 142.72 8Z" fill="var(--text)"></path>
+        <path class="piece p3" d="M191.447 92.4927L170.462 16.8718C169.224 12.4118 172.579 8 177.207 8H218.833C223.449 8 226.802 12.3899 225.586 16.8433L204.945 92.4641C203.072 99.3247 193.349 99.3453 191.447 92.4927Z" fill="var(--text)"></path>
+      </svg>
+    </a>
+  </div>
+  <p class="small">{{ site.tagline }}</p>
+{% endif %}

@@ -1,0 +1,24 @@
+---
+layout: base.html
+#title: Home
+#description: A tiny Eleventy site.
+---
+  
+<section class="home-grid projects" aria-label="Entries">
+
+    <article class="intro">
+      <p>Where human exploration meets machine collaboration. A space to experiment with code, motion, and form.</p>
+    </article>
+    {% for post in collections.post reversed %}
+    <article class="card">
+      <a class="thumb" href="{{ post.url }}" aria-label="{{ post.data.title }}">
+        <div class="photo">
+          <div class="item" style="{{ post.data.bg }}"></div>
+        </div>
+      </a>
+      <h2 class="card__title">{{ post.data.title }}</h2>
+      <p class="card__desc small">{{ post.data.teaser }}</p>
+    </article>
+    {% endfor %}
+
+</section>

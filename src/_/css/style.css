@@ -1,0 +1,367 @@
+/* =========
+   Tokens
+   ========= */
+   :root {
+    /* Colours */
+    --bg: #ffffff;
+    --emph: #f5f5f5;
+    --text: #111111;
+    --muted: #767676;
+  
+    /* Layout */
+    --maxw: 1440px;
+    --radius: 14px;
+  
+    /* Spacing scale (4px base) */
+    --spacing-unit: 4px;
+    --spacing-xxs: calc(2 * var(--spacing-unit)); /* 8px */
+    --spacing-xs:  calc(3 * var(--spacing-unit)); /* 12px */
+    --spacing-sm:  calc(5 * var(--spacing-unit)); /* 20px */
+    --spacing-md:  calc(8 * var(--spacing-unit)); /* 32px */
+    --spacing-lg:  calc(15 * var(--spacing-unit));/* 60px */
+  
+    /* Grid + gap */
+    --cols: 12;
+    --span: 6;
+    --gap-row: 3.2rem;
+    --gap-col: 1.6rem;
+  
+    /* Type */
+    --font-size-base: 16px;
+    --lh-base: 1.5;
+  
+    color-scheme: light dark; /* enable UA dark defaults */
+  }
+  
+  /* System dark mode */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e0e0e;
+      --emph: #1a1a1a;
+      --text: #f2f2f2;
+      --muted: #9a9a9a;
+    }
+  }
+  
+  /* =========
+     Base
+     ========= */
+  html { scroll-behavior: smooth; }
+  *, ::before, ::after { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 400 var(--font-size-base)/var(--lh-base) -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    overflow-y: scroll;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Media defaults */
+  img, svg, video, canvas {
+    display: block;
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+  
+  /* Container */
+  .wrap {
+    padding: var(--spacing-xs);
+    max-inline-size: var(--maxw);
+    margin-inline: auto;
+  }
+  
+  /* Type helpers */
+  .small { font-size: 0.75rem; line-height: 1rem; }
+  
+  /* Accessible focus ring */
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+  
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  
+  /* =========
+     Header / Footer
+     ========= */
+  header {
+    margin-block: 2rem 4rem;
+    text-align: center;
+    padding: 0;
+  }
+  
+  header svg {
+    inline-size: 32px;
+    margin-inline: auto;
+    display: block;
+    max-inline-size: 100%;
+  }
+
+  /* Brand hover micro-motion */
+  .brand .piece {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(.2,.6,0,1);
+    transition-duration: 500ms; /* default/fallback */
+    will-change: transform;
+  }
+
+  /* Faster on engage, slower on release for the “lego click” feel */
+  .brand:is(:hover, :focus-visible) .piece { transition-duration: 240ms; }
+  .brand:not(:hover):not(:focus-visible) .piece { transition-duration: 650ms; }
+
+  /* Offsets — tweak to taste */
+  .brand:is(:hover, :focus-visible) .p1 { transform: translate(-6px, -14px); } /* up-left */
+  .brand:is(:hover, :focus-visible) .p2 { transform: translate( 6px,  14px); } /* down-right */
+  .brand:is(:hover, :focus-visible) .p3 { transform: translate( 6px, -14px); } /* up-right */
+
+  /* Respect user motion settings */
+  @media (prefers-reduced-motion: reduce) {
+    .brand .piece { transition: none; transform: none; }
+  }
+
+  header h1 {
+    letter-spacing: -0.01em;
+    font-size: clamp(1.6rem, 3.8vw, 2.75rem);
+    margin: 0 0 0.25rem;
+  }
+  
+  header p { color: var(--muted); margin: 0.25rem 0 0; }
+  
+  footer {
+    color: var(--muted);
+    margin-block: 4rem 0;
+  }
+  
+  /* =========
+     Home layout container
+     ========= */
+  .home-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--gap-row) var(--gap-col);
+    align-items: start;
+  }
+  
+  /* Intro block (desktop default spans 4; overridden below on smaller) */
+  .intro {
+    align-self: flex-end;
+    color: var(--muted);
+  }
+  
+  .intro p {
+    font-size: 24px;
+    line-height: 28px;
+    font-style: normal;
+    font-weight: normal;
+    letter-spacing: -0.0325em;
+    margin: 0;
+  }
+  
+  .intro p + p { margin-top: 1em; }
+  
+  /* Projects section (sits right of intro on desktop) */
+  .projects {
+    grid-column: 5 / -1; /* columns 5–12 so intro can take 1–4 */
+  }
+  
+  /* Cards */
+  .projects .card { grid-column: auto; } /* important: don't force spans */
+  
+  /* Remove old spacer hack */
+  .projects::before { display: none; }
+  
+  /* =========
+     Grid + Cards
+     ========= */
+  .grid {
+    display: grid; /* default for non-home pages */
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* mobile default */
+    gap: var(--gap-row) var(--gap-col);               /* row then column */
+    margin-inline: auto;
+    padding: 0;
+    inline-size: 100%;
+  }
+  
+  .card {
+    overflow: hidden;
+    will-change: transform; /* better paint on hover */
+  }
+  
+  /* Media-aware hover: only on devices that actually hover */
+  @media (hover: hover) and (pointer: fine) {
+    .card:hover .item { transform: scale(1.06); }
+  }
+  
+  /* Visual tile */
+  .photo {
+    background-color: var(--emph);
+    border: none;
+    border-radius: var(--spacing-xxs);
+    min-block-size: 224px;
+    inline-size: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-radius .3s ease;
+  }
+  
+  .photo:hover {
+    border: 1px solid color-mix(in oklab, currentColor 8%, transparent);
+  }
+  
+  .photo .item {
+    display: block;
+    inline-size: 96px;
+    block-size: 128px;
+    object-fit: cover;
+    border-radius: 4px;
+    transition: transform .35s ease;
+  }
+  
+  /* Card text */
+  .card__title {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin: 8px 0 0;
+  }
+  
+  .card__desc { color: var(--muted); margin: 0; }
+  
+  /* Posts */
+  .post__title { margin-block-end: 0; }
+  .post__date { color: var(--muted); margin-block-end: var(--gap-col); }
+  
+  /* Projects page */
+  .breadcrumb { color: var(--muted); margin-block-end: 0.5rem; }
+  .breadcrumb a { color: var(--text); text-decoration: none;}
+  .breadcrumb a:hover { text-decoration: underline; }
+  
+  /* Subtle shadow and hairline border */
+  .shadow { box-shadow: 0 10px 30px rgba(0, 0, 0, .25); }
+  .border { border: 1px solid color-mix(in oklab, currentColor 8%, transparent); }
+  
+  /* =========
+     Headings
+     ========= */
+  h1 {
+    font-size: clamp(2rem, 5vw, 60px);
+    line-height: clamp(2.25rem, 5.5vw, 64px);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    margin: 0;
+  }
+  
+  /* =========
+     Project page block
+     ========= */
+  body#project .project .content {
+    background-color: var(--emph);
+    border-radius: var(--spacing-xxs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* min-block-size: calc(100vh - 4rem); */
+    margin-block-end: 2rem;
+    padding: 2rem;
+  }
+  
+  /* Info columns */
+  .info { inline-size: 100%; }
+  .info > div {
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: 400;
+    letter-spacing: -0.0325em;
+  }
+  .info > div p { margin: 0; max-inline-size: 50rem; }
+  
+/* ==========================================================================
+   ACCESSIBILITY
+   ========================================================================== */
+   .skip-link,
+   .visually-hidden {
+     font-size: inherit;
+     position: absolute;
+     z-index: 99993;
+     top: 0;
+     left: 50%;
+     text-align: center;
+     text-decoration: underline;
+     transition: transform 0.166s;
+     transform: translate(-50%, -110%);
+     opacity: 0;
+     pointer-events: none;
+   }
+   .skip-link:focus {
+     transform: translate(-50%);
+     opacity: 1;
+   }
+  
+  /* =========
+     Responsive
+     ========= */
+  
+  /* --- Small (≤959px): stack everything single column --- */
+  @media (max-width: 959px) {
+    /*.home-grid { grid-template-columns: 1fr; }*/
+    .intro, .projects { grid-column: 1 / -1; }
+    .home-grid .grid { grid-template-columns: 1fr; } /* cards 1-up */
+    .projects .card { grid-column: span 6; } /* <- keep auto, don’t force spans */
+  }
+  
+  /* --- Medium (960–1199px): intro full width; cards two-up --- */
+  @media (min-width: 960px) and (max-width: 1199px) {
+    .home-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+    .intro, .projects { grid-column: 1 / -1; }       /* intro full width */
+    .home-grid .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } /* cards 2-up */
+    .projects .card { grid-column: span 4; } /* <- keep auto, don’t force spans */
+  }
+  
+  /* --- Large (≥1200px): keep rails, cards two-up on home --- */
+  @media (min-width: 1200px) {
+  .intro { grid-column: 1 / span 4; }
+  .projects { grid-column: 5 / -1; }
+  .home-grid .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .projects .card { grid-column: span 2; } /* <- keep auto, don’t force spans */
+}
+  
+  /* Desktop bumps for inner .grid only (non-home pages) */
+  @media (min-width: 960px) {
+    .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } /* non-home pages */
+    .wrap { padding: 1rem; }
+
+    body#project .project .content {
+      min-block-size: calc(100vh - 4rem);
+    }
+  
+    .info {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: var(--gap-col);
+    }
+    .info > div {
+      inline-size: calc((100% - var(--gap-col) * ( (var(--cols) / var(--span)) - 1)) / (var(--cols) / var(--span)));
+    }
+  }
+  
+  /* Optional: Aspect-ratio helper for tiles
+  .photo { aspect-ratio: 4 / 3; min-block-size: auto; }
+  */
+  

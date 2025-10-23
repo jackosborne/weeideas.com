@@ -1,0 +1,22 @@
+{
+  "name": "weeideas.com",
+  "version": "1.0.0",
+  "description": "just wee ideas tbh",
+  "author": {
+    "name": "Jack Osborne",
+    "url": "https://weeideas.com/"
+  },
+  "scripts": {
+    "start": "npx @11ty/eleventy --serve",
+    "build": "npx @11ty/eleventy"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "@11ty/eleventy-img": "^6.0.4",
+    "@11ty/eleventy-navigation": "^1.0.4",
+    "@11ty/eleventy-plugin-rss": "^2.0.4",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.2",
+    "@quasibit/eleventy-plugin-sitemap": "^2.2.0"
+  }
+}

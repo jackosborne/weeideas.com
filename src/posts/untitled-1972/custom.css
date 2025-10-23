@@ -1,0 +1,29 @@
+:root { --art-max: 640px; } /* tweak your art’s max size */
+
+/* The artwork box controls size & cropping */
+.art-wrap {
+  padding: 104px;
+  border-radius: 4px;
+  background: #fff;
+  display:grid;
+  place-items:center;  
+  width: min(92vw, var(--art-max));
+  aspect-ratio: 1 / 1;        /* keep it square; remove if you want a rectangle */
+  position: relative;
+  overflow: hidden;           /* clip any overflow (e.g., hints) */
+  border: 0;                  /* optional: add a border here if you want one */
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
+
+.hint {
+  color: var(--muted);
+  pointer-events: none;
+  padding-top: 48px;
+  text-align: center;;
+}

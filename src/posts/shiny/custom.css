@@ -1,0 +1,230 @@
+/* =========
+   Shiny Tilt Card — production pass
+   Keeps your class names; add class="card" + JS sets --rx/--ry/--px/--py
+   ========= */
+
+/* Design tokens (safe to override at any level) */
+:root {
+  /* JS-driven tilt + glare */
+  --rx: 0deg; --ry: 0deg; --px: 50%; --py: 50%;
+
+  /* Edge + glow */
+  --rim: rgba(255,255,255,.14);
+  --glow-a: rgba(0,231,255,.45);
+  --glow-b: rgba(247, 89,228,.35);
+
+  /* Shadows */
+  --shadow-rest: 0 22px 40px rgba(0,0,0,.35);
+  --shadow-hover:
+    0 0 0 1px rgba(255,255,255,.06),
+    0 0 14px 3px var(--glow-a),
+    0 0 28px 10px var(--glow-b),
+    0 26px 50px rgba(0,0,0,.55);
+
+  /* Foil layers (override with image-set for HiDPI if desired) */
+  --foil-default: url("off.jpg");
+  --foil-active:  url("on.jpg");
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Slightly soften rest shadow on dark UIs */
+    --shadow-rest: 0 18px 36px rgba(0,0,0,.6);
+    --shadow-hover:
+      0 0 0 1px rgba(255,255,255,.08),
+      0 0 14px 3px color-mix(in oklab, var(--glow-a) 80%, black),
+      0 0 28px 10px color-mix(in oklab, var(--glow-b) 80%, black),
+      0 30px 60px rgba(0,0,0,.75);
+  }
+}
+
+/* Core card */
+.card {
+  /* Size: keep fixed like yours; comment-in aspect-ratio for fluid */
+  inline-size: 320px;            /* was width */
+  block-size: 452px;             /* was height */
+  /* aspect-ratio: 80 / 113; */  /* optional: make responsive */
+
+  position: relative;
+  border-radius: 2px;
+  background: #d8d8d8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  /* 3D + perf */
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+  contain: paint;                /* isolate paints */
+
+  /* Shadow + rim */
+  box-shadow: var(--shadow-rest), inset 0 0 0 1px var(--rim);
+
+  /* Motion */
+  transition: box-shadow 180ms ease, transform 180ms ease;
+
+  /* Touch */
+  touch-action: manipulation;    /* avoid gesture conflicts on iOS */
+}
+
+/* Hover/active/focus elevation only on true hover devices */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover { box-shadow: var(--shadow-hover); }
+}
+.card.active,
+.card:focus-visible {
+  box-shadow: var(--shadow-hover);
+  outline: none; /* rely on :focus-visible ring below if needed */
+}
+
+/* Optional explicit focus ring for keyboard users */
+.card:focus-visible {
+  outline: 2px solid #7aa2ff;
+  outline-offset: 3px;
+}
+
+/* Foil layers */
+.foil {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: repeat;
+  transition: opacity 220ms ease;
+  will-change: opacity;
+}
+
+.foil--default {
+  background-image: var(--foil-default);
+  opacity: 1;
+  transform: translateZ(1px);
+}
+
+.foil--active {
+  background-image: var(--foil-active);
+  opacity: 0;
+  transform: translateZ(2px);
+}
+
+.card.active .foil--default { opacity: 0; }
+.card.active .foil--active  { opacity: 1; }
+
+/* Spectral overlays (colour dodge sheen) */
+.card::before,
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  mix-blend-mode: color-dodge;
+  background-size: 300% 300%;
+  opacity: .2;
+  will-change: background-position, opacity;
+}
+
+/* Base spectrum */
+.card::before {
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgb(0,231,255) 30%,
+    rgb(255,0,231) 70%,
+    transparent 100%
+  );
+  transform: translateZ(10px);
+}
+
+/* Enhanced spectrum when active */
+.card.active::before {
+  opacity: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 25%,
+    rgba(0,231,255,.7) 45%,
+    rgba(255,0,231,.7) 55%,
+    transparent 70%,
+    transparent 100%
+  );
+}
+
+/* Glare (follows pointer via --px/--py set in JS) */
+.card__glare {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(220px 220px at var(--px) var(--py),
+      rgba(255,255,255,.22),
+      rgba(255,255,255,0) 60%);
+  transform: translateZ(30px);
+}
+
+/* Content image sits above foils */
+.card img {
+  inline-size: 240px;
+  block-size: auto;
+  z-index: 2;
+  transform: translateZ(20px);
+  display: block;
+}
+
+/* Motion onboarding hint */
+.motion-hint  {
+  color: var(--muted, #767676);
+  display: none;
+  margin-block-start: 16px;
+  text-align: center;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .motion-hint {
+    margin-block-start: .8rem;
+    font: 500 14px/1.2 system-ui, sans-serif;
+    display: block;
+  }
+  .card.motion-pending {
+    filter: grayscale(1) contrast(.93) brightness(.92);
+  }
+}
+.card.motion-enabled { filter: none; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card::before,
+  .card::after,
+  .card__glare {
+    transition: none !important;
+  }
+  .card {
+    transform: none !important;
+    box-shadow: var(--shadow-rest), inset 0 0 0 1px var(--rim) !important;
+  }
+  .motion-hint { display: none !important; }
+  .card.motion-pending { filter: none !important; }
+}
+
+/* High-contrast / forced-colors support */
+@media (forced-colors: active) {
+  .card,
+  .card::before,
+  .card::after,
+  .card__glare {
+    mix-blend-mode: normal;
+    box-shadow: none;
+  }
+  .card { outline: 2px solid CanvasText; }
+}

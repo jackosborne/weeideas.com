@@ -1,0 +1,27 @@
+---
+layout: base.html
+---
+<div class="breadcrumb small">
+  <a href="/" title="Back to homepage">Home</a> / {{ title }}
+</div>
+
+<section class="project" aria-label="Entries">
+  <div class="content">
+    {{ content }}
+  </div>
+  <div class="info">
+    <div>
+      {% if date %}
+      <p class="post__date small">
+        {{ date | date: "%B, %Y" }}
+      </p>
+      {% endif %}
+      {% if page.url != '/' %}
+        <h1 class="post__title">{{ title }}</h1>
+      {% endif %}
+    </div>
+    <div>
+      <p>{{ description }}</p>
+    </div>
+  </div>
+</section>

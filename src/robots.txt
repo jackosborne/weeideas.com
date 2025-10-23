@@ -1,0 +1,10 @@
+# robots.txt for weeideas.com
+
+User-agent: *
+Allow: /
+
+Disallow: /.11ty/
+Disallow: /_site/
+Disallow: /404.html
+
+Sitemap: https://weeideas.com/sitemap.xml

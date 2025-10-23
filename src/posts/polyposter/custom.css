@@ -1,0 +1,201 @@
+/* =========
+   Tokens
+   ========= */
+   :root {
+    /* Colours */
+    --panel-bg: #ffffff;
+    --panel-text: #111111;
+    --accent: #7aa2ff;
+  
+    /* Layout */
+    --sidebar-w: 360px;
+    --sidebar-w-min: 280px;
+    --wrap-pad: 24px;
+    --gap: 24px;
+    --radius: 10px;
+  
+    /* Shadow */
+    --shadow-sm: 0 2px 12px rgba(0,0,0,.08);
+    --shadow-md: 0 8px 40px rgba(0,0,0,.12);
+  
+    color-scheme: light dark;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --panel-bg: #121212;
+      --panel-text: #f2f2f2;
+      --shadow-sm: 0 2px 12px rgba(0,0,0,.4);
+      --shadow-md: 0 8px 40px rgba(0,0,0,.5);
+    }
+  }
+  
+  /* =========
+     Base a11y + motion
+     ========= */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: .001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  
+  /* Improve form hit targets on touch */
+  @media (pointer: coarse) {
+    :where(select, button) { padding-block: 14px; }
+  }
+  
+  /* =========
+     Layout: fixed-width controls + fluid stage
+     ========= */
+  .shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+    gap: var(--gap);
+    inline-size: 100%;
+    padding: var(--wrap-pad) clamp(1rem, 4vw, 2rem);
+    box-sizing: border-box;
+    align-items: start;
+  }
+  
+  .sidebar {
+    position: sticky;
+    inset-block-start: var(--wrap-pad);
+    align-self: start;
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  /* Panel */
+  .controls {
+    inline-size: 100%;
+    max-inline-size: var(--sidebar-w);
+    min-inline-size: var(--sidebar-w-min);
+    background: var(--panel-bg);
+    color: var(--panel-text);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  /* Rows and labels */
+  .row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  label {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  /* =========
+     Controls: buttons, selects, range
+     ========= */
+  select,
+  button {
+    appearance: none;
+    border: 0;
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    cursor: pointer;
+    background: #111;
+    color: #fff;
+    line-height: 1;
+    transition: transform .06s ease, filter .2s ease;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    select,
+    button {
+      background: #e9e9e9;
+      color: #111;
+    }
+  }
+  
+  select:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  
+  button:active { transform: translateY(1px); }
+  button:disabled { opacity: .6; cursor: not-allowed; }
+  
+  input[type="range"] {
+    inline-size: min(320px, 100%);
+    accent-color: var(--accent);
+  }
+  
+  /* Keep width stable when label text changes */
+  .sidesValue {
+    display: inline-block;
+    min-inline-size: 10ch;
+    text-align: start;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  
+  /* =========
+     Stage + Canvas
+     ========= */
+  .stage {
+    /* min-block-size: 60svh; */
+    display: grid;
+    place-items: center;
+  }
+  
+  .canvasWrap {
+    inline-size: 100%;
+    max-inline-size: 800px;
+    aspect-ratio: 8 / 11;
+    display: grid;
+    place-items: center;
+  }
+  
+  /* Let CSS control size; height follows width */
+  canvas {
+    inline-size: 100%;
+    block-size: auto;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: var(--shadow-md);
+  }
+  
+  /* If your JS sets canvas width/height attributes, keep them
+     for pixel density but DO NOT set style="width/height" inline. */
+  
+  /* =========
+     Breakpoint: stack controls above canvas
+     ========= */
+  @media (max-width: 900px) {
+    .shell {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 16px;
+    }
+    .sidebar { position: static; }
+    .controls {
+      max-inline-size: 560px;
+      min-inline-size: 0;
+      margin-inline: auto;
+    }
+    .canvasWrap {
+      max-inline-size: 100%;
+      padding: 12px;
+    }
+  }
+  
