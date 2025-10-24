@@ -184,23 +184,23 @@
   }
 
   .pill {
-    background: color-mix(in srgb, var(--surface, #1b1b1b) 90%, white 10%);
-    border: 1px solid color-mix(in srgb, var(--surface, #1b1b1b) 75%, white 25%);
+    background: var(--emph);
+    border: 1px solid var(--emph);
     border-radius: 999px;
     padding: 0.35rem 0.8rem;
-    color: rgba(255,255,255,0.7);
+    color: var(--text);
     cursor: pointer;
     transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
   }
 
   .pill:hover {
-    border-color: rgba(255,255,255,0.4);
-    color: rgba(255,255,255,0.85);
+    border-color: color-mix(in oklab, var(--text) 14%, transparent);
+    color: var(--text);
   }
 
   .pill[aria-pressed="true"] {
     background: var(--bg);
-    border-color: rgba(255,255,255,0.25);
+    border-color: var(--text);
     color: var(--text);
   }
 
