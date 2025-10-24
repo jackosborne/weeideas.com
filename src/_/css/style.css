@@ -172,6 +172,44 @@
   }
   
   .intro p + p { margin-top: 1em; }
+
+  /* filters */
+  /* keep it tiny and robust */
+  [hidden] { display: none !important; }
+  #filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+  }
+
+  .pill {
+    background: color-mix(in srgb, var(--surface, #1b1b1b) 90%, white 10%);
+    border: 1px solid color-mix(in srgb, var(--surface, #1b1b1b) 75%, white 25%);
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+  }
+
+  .pill:hover {
+    border-color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.85);
+  }
+
+  .pill[aria-pressed="true"] {
+    background: var(--bg);
+    border-color: rgba(255,255,255,0.25);
+    color: var(--text);
+  }
+
+  @media (hover: hover) {
+    .pill:focus-visible {
+      outline: 1px solid rgba(255,255,255,0.4);
+      outline-offset: 2px;
+    }
+  }
   
   /* Projects section (sits right of intro on desktop) */
   .projects {
@@ -197,7 +235,6 @@
   }
   
   .card {
-    overflow: hidden;
     will-change: transform; /* better paint on hover */
   }
   
@@ -209,7 +246,6 @@
   /* Visual tile */
   .photo {
     background-color: var(--emph);
-    border: none;
     border-radius: var(--spacing-xxs);
     min-block-size: 224px;
     inline-size: 100%;
@@ -217,11 +253,41 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transition: border-radius .3s ease;
+    /* use shadow as a “border” so layout doesn’t jump */
+    box-shadow: inset 0 0 0 0 transparent;
+    transition: box-shadow .15s ease, border-radius .3s ease, transform .15s ease;
   }
-  
-  .photo:hover {
-    border: 1px solid color-mix(in oklab, currentColor 8%, transparent);
+
+  /* Hover ring (mouse) */
+  .card:hover .photo,
+  .thumb:hover .photo {
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--text) 14%, transparent);
+  }
+
+  /* Make the link fill the tile and carry focus */
+  .thumb {
+    display: block;
+    border-radius: var(--spacing-xxs);
+    outline: none; /* override your global :focus-visible outline */
+  }
+
+  /* Keyboard focus ring (outside-looking, subtle double ring) */
+  .thumb:focus-visible .photo {
+    box-shadow:
+      0 0 0 2px color-mix(in oklab, var(--text) 38%, transparent),
+      0 0 0 4px color-mix(in oklab, var(--text) 18%, transparent);
+    border-radius: calc(var(--spacing-xxs) + 2px);
+    transform: translateY(-1px); /* tiny lift for tactility */
+  }
+
+  /* Keep hover and focus visually aligned */
+  @media (hover:hover) {
+    .card:hover .photo { transform: translateY(-1px); }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .photo { transition: box-shadow .01ms, border-radius .01ms; }
   }
   
   .photo .item {

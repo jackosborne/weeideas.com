@@ -5,6 +5,7 @@ permalink: /losing-ma-marbles/
 #teaser: 
 #date:
 description:
+#tags: ["childhood", "generative", "motion", "study"]
 css:
   - custom.css
 js:

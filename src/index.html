@@ -1,16 +1,38 @@
 ---
 layout: base.html
 #title: Home
-#description: A tiny Eleventy site.
 ---
-  
-<section class="home-grid projects" aria-label="Entries">
 
-    <article class="intro">
-      <p>Where human exploration meets machine collaboration. A space to experiment with code, motion, and form.</p>
-    </article>
-    {% for post in collections.post reversed %}
-    <article class="card">
+<section class="home-grid projects" aria-label="Entries">
+  <article class="intro">
+    <p>Where human exploration meets machine collaboration. A space to experiment with code, motion, and form.</p>
+
+    <h5 class="small" style="font-weight: 500; margin-bottom: 0.25rem;">Filters</h5>
+    <div id="filters" class="pills small" role="toolbar" aria-label="Filter projects by tag">
+      <button class="pill" aria-pressed="true"  data-tag="all">All</button>
+      <button class="pill" aria-pressed="false" data-tag="childhood">Childhood</button>
+      <button class="pill" aria-pressed="false" data-tag="generative">Generative</button>
+      <button class="pill" aria-pressed="false" data-tag="motion">Motion</button>
+      <button class="pill" aria-pressed="false" data-tag="study">Study</button>
+    </div>
+  </article>
+
+  {% for post in collections.post reversed %}
+    {% comment %} Build a space-separated list of facet tags for the card (excluding base tags) {% endcomment %}
+    {% assign facetTags = "" %}
+    {% if post.data.tags %}
+      {% for t in post.data.tags %}
+        {% unless t == "post" or t == "posts" or t == "work" %}
+          {% if facetTags == "" %}
+            {% assign facetTags = t %}
+          {% else %}
+            {% assign facetTags = facetTags | append: " " | append: t %}
+          {% endif %}
+        {% endunless %}
+      {% endfor %}
+    {% endif %}
+
+    <article class="card" data-tags="{{ facetTags }}">
       <a class="thumb" href="{{ post.url }}" aria-label="{{ post.data.title }}">
         <div class="photo">
           <div class="item" style="{{ post.data.bg }}"></div>
@@ -18,7 +40,18 @@ layout: base.html
       </a>
       <h2 class="card__title">{{ post.data.title }}</h2>
       <p class="card__desc small">{{ post.data.teaser }}</p>
-    </article>
-    {% endfor %}
 
+      {% comment %}
+      <ul class="tags small">
+        {% if post.data.tags %}
+          {% for t in post.data.tags %}
+            {% unless t == "post" or t == "posts" or t == "work" %}
+              <li>{{ t }}</li>
+            {% endunless %}
+          {% endfor %}
+        {% endif %}
+      </ul>
+      {% endcomment %}
+    </article>
+  {% endfor %}
 </section>

@@ -16,6 +16,7 @@ bg: "background-image: linear-gradient(
 teaser: Capturing that got, got, need feeling all over again.
 date: 2025-10-12
 description: When I got sick as a little boy my Mum and Dad would buy me a box of Panini football stickers—spoiled, I know—so that I could pass the time in my bed opening, sorting through and sticking the stickers to my book. Nothing more than paper and glue, yet somehow everything. I've tried to recreate the shiny sticker in html, css and js.
+tags: ["childhood", "motion"]
 css:
   - custom.css
 js:

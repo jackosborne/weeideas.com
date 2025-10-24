@@ -26,6 +26,7 @@ bg: "background: #ED213A;
 teaser: Doesn't look as cool as it tasted but it satisified my hunger.
 date: 2025-10-20
 description: Sometimes it's fun to put a new spin on old things. This is my intrepreation of what it would look like if I took this British childhood classic, vanilla ice cream with raspberry swirls, and turned it into code.
+tags: ["childhood", "motion"]
 css:
   - custom.css
 js:

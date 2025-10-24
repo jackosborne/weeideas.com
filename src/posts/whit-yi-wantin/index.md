@@ -5,6 +5,7 @@ permalink: /whit-yi-wantin/
 #teaser 
 #date:
 description:
+#tags: ["childhood", "generative", "motion", "study"]
 css:
   - custom.css
 js:

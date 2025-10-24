@@ -10,6 +10,7 @@ bg: "--col: 20px; --row: 21px;
 teaser: Adding movement to Hartmut Böhm’s piece.
 date: 2025-11-01
 description: "I’ve been fascinated with this <a href=\"https://www.minusspace.com/editions/p/hartmutbohm-untitled-1972\" title=\"Hartmut Böhm, Untitled, 1972\" rel=\"nofollow\">Hartmut Böhm</a> piece for ages. Since the print runs around $2,500, I decided to recreate it digitally, introducing a layer of interactivity both for fun and to see how closely I could capture the original."
+tags: ["motion", "study"]
 css:
   - custom.css
 js:
