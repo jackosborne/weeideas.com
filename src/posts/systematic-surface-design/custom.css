@@ -1,0 +1,140 @@
+  :root{
+    --grid-line:#d9d9d9;
+    --tentative-opacity:.16;
+    --locked-opacity:1;
+    --ui-gap:16px;
+
+    --btn-primary-bg: #111;
+    --btn-primary-fg: #fff;
+    --btn-secondary-border: #aaa;
+  
+    --ring: color-mix(in oklab, var(--accent, #000) 45%, transparent);
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root{
+      --grid-line: #2a2a2a;
+      
+      --btn-primary-bg: #fff;        /* dark mode: bright pill */
+      --btn-primary-fg: #111;
+      --btn-secondary-border: #ffffff99;
+    }
+  }
+
+  #art{
+    margin:24px auto;
+  }
+
+  /* Square artwork wrapper */
+  .stage{
+    aspect-ratio:1/1;
+    width:100%;
+    position:relative;
+  }
+  /* The SVG fills the square wrapper */
+  .stage svg{width:100%;height:100%;display:block;touch-action:manipulation}
+
+  /* Legend + controls stack */
+  .panel{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+    margin-top:20px;
+  }
+  .legend{
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+
+  .legend button{
+    width:42px;
+    height:42px;
+    display:grid;
+    place-items:center;
+    background:var(--emph);
+    border:1px solid #e0e0e0;
+    border-radius:2px;
+    cursor:pointer;
+    transition:box-shadow .15s ease,border-color .15s ease,transform .06s ease;
+  }
+
+  .legend button:active{
+    transform:scale(.98)
+  }
+
+  .legend button[aria-pressed="true"]{
+    outline:2px solid var(--text);
+    /* outline-offset:3px; */
+    border-color:var(--text);
+    box-shadow:0 0 0 2px #fff;
+  }
+
+  .legend svg{
+    width:26px;
+    height:26px;
+    display:block;
+    fill: var(--text);
+  }
+
+  .controls{
+    display:flex;
+    gap:10px
+  }
+
+  .controls button{
+    appearance:none;
+    border:1px solid #111;
+    background:#111;
+    color:#fff;
+    padding:8px 14px;
+    border-radius:6px;
+    cursor:pointer;
+    letter-spacing:.02em
+  }
+
+  .controls button.secondary{
+    background:#efefef;
+    color:#111;
+    border-color:#cfcfcf;
+  }
+
+  .hint{
+    max-width:520px;
+    text-align:center;
+    margin:6px auto 0;
+
+  }
+
+
+/* hairlines styling */
+#hairlines{
+  stroke: var(--grid-line);
+  stroke-width: 0.24;
+  shape-rendering: crispEdges;
+  stroke-linecap: square;
+}
+
+/* shapes color via CSS (for reliable theming) */
+g.cell .shape { color: var(--text); }
+g.cell .shape > * { fill: currentColor; }
+
+/* States (applied to each cell’s <g>) */
+g.cell[data-state="tentative"] .shape{opacity:var(--tentative-opacity)}
+g.cell[data-state="locked"]     .shape{opacity:var(--locked-opacity)}
+
+
+/* Remove default blue focus ring on SVG cells */
+g.cell:focus,
+g.cell:focus-visible {
+  outline: none;          /* kill the browser ring */
+}
+
+/* Optional: add your own subtle focus style */
+/*
+g.cell:focus-visible rect.bg {
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+*/
