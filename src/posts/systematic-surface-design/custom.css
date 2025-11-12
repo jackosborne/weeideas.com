@@ -14,7 +14,7 @@
   @media (prefers-color-scheme: dark){
     :root{
       --grid-line: #2a2a2a;
-      
+
       --btn-primary-bg: #fff;        /* dark mode: bright pill */
       --btn-primary-fg: #111;
       --btn-secondary-border: #ffffff99;
@@ -54,7 +54,7 @@
     display:grid;
     place-items:center;
     background:var(--emph);
-    border:1px solid #e0e0e0;
+    border:1px solid var(--muted);
     border-radius:2px;
     cursor:pointer;
     transition:box-shadow .15s ease,border-color .15s ease,transform .06s ease;
