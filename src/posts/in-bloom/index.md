@@ -11,7 +11,7 @@ bg: >-
   background-position:center, center;
 teaser: A meditative generative bloom exploring colour, rhythm, and repetition.
 date: 2026-03-05
-description: Jessica Poundstone’s Color Space series has always felt incredibly calm to look at. I wanted to see what that idea might look like if the grid could breathe, letting colour slowly bloom outward from the centre before dissolving and repeating.
+description: 'Jessica Poundstone’s <a href="https://www.jessicapoundstone.com/color-space-collection/color-space-twilight" title="Color Space Twilight" rel="nofollow">Color Space series</a> has always felt incredibly calm to look at. I wanted to see what that idea might look like if the grid could breathe, letting colour slowly bloom outward from the centre before dissolving and repeating.'
 tags: ["generative", "motion"]
 css:
   - custom.css
