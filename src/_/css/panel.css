@@ -4,9 +4,9 @@
    Tokens
    ========= */
 :root {
-  --panel-w: 360px;
+  --panel-w: 320px;
   --panel-r: 6px;
-  --panel-pad: 18px;
+  --panel-pad: 14px;
 
   --panel-bg: rgba(255, 255, 255, 0.92);
   --panel-text: #111;
@@ -19,7 +19,7 @@
   --accent: #2f6bff;
   --focus: 0 0 0 3px color-mix(in oklab, var(--accent) 30%, transparent);
 
-  --control-h: 40px;
+  --control-h: 36px;
   --control-r: 14px;
   --control-bg: rgba(0, 0, 0, 0.04);
   --control-bg-hover: rgba(0, 0, 0, 0.065);
@@ -71,10 +71,10 @@
   padding: var(--panel-pad);
   border-top: 1px solid var(--panel-line);
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
-.panel__section:not(:has(+ .panel__header)) {
+.panel__section:first-child {
   border-top: none;
 }
 
@@ -87,20 +87,22 @@
 
 .panel__sectionTitle {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
   letter-spacing: -0.01em;
 }
 
 .panel__footer {
   border-top: 1px solid var(--panel-line);
   padding: 12px var(--panel-pad);
-  /* position: sticky; */
   inset-block-end: 0;
   background: linear-gradient(
     to bottom,
     color-mix(in oklab, var(--panel-bg) 65%, transparent),
     var(--panel-bg)
   );
+  display: grid;
+  gap: 12px;
+  margin-top: 0;
 }
 
 /* =========
@@ -108,7 +110,7 @@
      ========= */
 .field {
   display: grid;
-  gap: 8px;
+  gap: 4px;
 }
 
 .field__head {
@@ -119,7 +121,7 @@
 }
 
 .field__label {
-  font-weight: 600;
+  font-weight: 550;
   letter-spacing: -0.01em;
 }
 
@@ -127,6 +129,7 @@
   color: var(--panel-subtle);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  font-size: 0.92rem;
 }
 
 /* Controls */
@@ -137,7 +140,7 @@
   border: 1px solid transparent;
   background: var(--control-bg);
   color: inherit;
-  padding: 10px 12px;
+  padding: 8px 12px;
   transition:
     background 0.15s ease,
     border-color 0.15s ease;
@@ -157,11 +160,12 @@
 .field--select {
   position: relative;
 }
+
 .field--select::after {
   content: "";
   position: absolute;
   inset-inline-end: 12px;
-  inset-block-start: calc(50% + 10px);
+  inset-block-start: calc(50% + 8px);
   translate: 0 -50%;
   inline-size: 10px;
   block-size: 10px;
@@ -174,23 +178,25 @@
     opacity 0.15s ease,
     transform 0.15s ease;
 }
+
 .field--select:hover::after,
 .field--select:has(select:focus-visible)::after {
   opacity: 0.7;
   transform: translateY(1px);
 }
+
 .field--select select {
   appearance: none;
   padding-inline-end: 36px;
 }
 
 /* =========
-     Minimal range (PhotoGradient-ish)
+     Minimal range
      ========= */
 .range {
   inline-size: 100%;
   appearance: none;
-  block-size: 28px;
+  block-size: 20px;
   background: transparent;
 }
 
@@ -199,19 +205,22 @@
   background: color-mix(in oklab, var(--panel-text) 18%, transparent);
   border-radius: 999px;
 }
+
 .range::-webkit-slider-thumb {
   appearance: none;
-  inline-size: 18px;
-  block-size: 18px;
+  inline-size: 16px;
+  block-size: 16px;
   border-radius: 999px;
   background: var(--panel-bg);
   border: 1px solid var(--panel-line);
   box-shadow: var(--shadow-md);
-  margin-top: -7px;
+  margin-top: -6px;
 }
+
 .range:focus-visible {
   outline: none;
 }
+
 .range:focus-visible::-webkit-slider-thumb {
   box-shadow: var(--shadow-md), var(--focus);
 }
@@ -222,9 +231,10 @@
   background: color-mix(in oklab, var(--panel-text) 18%, transparent);
   border-radius: 999px;
 }
+
 .range::-moz-range-thumb {
-  inline-size: 18px;
-  block-size: 18px;
+  inline-size: 16px;
+  block-size: 16px;
   border-radius: 999px;
   background: var(--panel-bg);
   border: 1px solid var(--panel-line);
@@ -236,7 +246,7 @@
      ========= */
 .btn {
   inline-size: 100%;
-  min-block-size: 44px;
+  min-block-size: 40px;
   border-radius: 16px;
   border: 1px solid var(--panel-line);
   background: var(--control-bg);
@@ -247,12 +257,15 @@
     transform 0.06s ease,
     background 0.15s ease;
 }
+
 .btn:hover {
   background: var(--control-bg-hover);
 }
+
 .btn:active {
   transform: translateY(1px);
 }
+
 .btn:focus-visible {
   outline: none;
   box-shadow: var(--focus);
@@ -263,6 +276,7 @@
   color: var(--panel-bg);
   border-color: transparent;
 }
+
 @media (prefers-color-scheme: dark) {
   .btn--primary {
     background: #f1f1f1;
@@ -287,6 +301,7 @@
   color: var(--panel-subtle);
   font-size: 0.95rem;
 }
+
 .toggle input {
   inline-size: 16px;
   block-size: 16px;
