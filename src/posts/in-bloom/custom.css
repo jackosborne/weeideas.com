@@ -19,18 +19,21 @@
   inline-size: 100%;
   padding: 24px clamp(1rem, 4vw, 2rem);
   box-sizing: border-box;
-  /* align-items: start; */
   align-items: center;
 }
 
+.shell > * {
+  min-width: 0;
+}
+
 .frame {
-  width: min(90vmin, 760px);
+  width: min(100%, 760px);
   aspect-ratio: 1;
   padding: 4.5%;
+  box-sizing: border-box;
 
   display: grid;
   place-items: center;
-
   justify-self: center;
 }
 
@@ -45,4 +48,25 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   background: transparent;
+}
+
+@media (max-width: 900px) {
+  .shell {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px;
+    align-items: start;
+  }
+
+  .panel {
+    position: static;
+    inline-size: 100%;
+    max-inline-size: 320px;
+    margin-inline: auto;
+  }
+
+  .frame {
+    width: 100%;
+    max-width: 640px;
+  }
 }
