@@ -9,9 +9,9 @@ bg: >-
   background-repeat:no-repeat;
   background-size:44% 44%, 18% 18%;
   background-position:center, center;
-teaser: A slow generative bloom exploring colour, rhythm, and gentle motion.
+teaser: A meditative generative bloom exploring colour, rhythm, and repetition.
 date: 2026-03-05
-description: This piece explores how subtle shifts in colour, opacity, and timing can create a calming visual rhythm. Tiles gradually appear from the centre and bloom outward before dissolving again, forming a continuous cycle intended to be watched rather than analysed.
+description: Jessica Poundstone’s Color Space series has always felt incredibly calm to look at. I wanted to see what that idea might look like if the grid could breathe, letting colour slowly bloom outward from the centre before dissolving and repeating.
 tags: ["generative", "motion"]
 css:
   - custom.css
