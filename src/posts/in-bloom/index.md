@@ -31,10 +31,12 @@ links:
         </div>
         <select id="preset" class="field__control">
           <option value="twilight">Twilight</option>
-          <option value="aurora">Aurora</option>
-          <option value="heatwave">Heatwave</option>
-          <option value="deep-sea">Deep Sea</option>
-          <option value="mono-bloom">Mono Bloom</option>
+          <option value="sky">Sky</option>
+          <option value="lilac">Lilac</option>
+          <option value="peony">Peony</option>
+          <option value="sun">Sun</option>
+          <option value="grass">Grass</option>
+          <!-- <option value="cantaloupe">Cantaloupe</option> -->
         </select>
       </div>
     </section>

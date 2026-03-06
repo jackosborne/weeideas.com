@@ -57,63 +57,121 @@ const presets = {
     cornerRadius: 0,
     centerHue: 220,
     edgeHue: 290,
+    satCenter: 84,
+    satEdge: 42,
+    lightCenter: 56,
+    lightEdge: 66,
     glowStrength: 0.08,
     driftAmount: 0.03,
     misregister: 0.18,
   },
-  aurora: {
-    cycleDuration: 7600,
-    ringSoftness: 0.16,
-    pulseAmount: 0.05,
-    grid: 10,
-    overlap: 0.4,
-    cornerRadius: 2,
-    centerHue: 170,
-    edgeHue: 245,
-    glowStrength: 0.12,
-    driftAmount: 0.05,
-    misregister: 0.2,
-  },
-  heatwave: {
-    cycleDuration: 6200,
-    ringSoftness: 0.1,
-    pulseAmount: 0.06,
-    grid: 8,
-    overlap: 0.55,
+
+  // cantaloupe: {
+  //   cycleDuration: 6800,
+  //   ringSoftness: 0.12,
+  //   pulseAmount: 0.045,
+  //   grid: 9,
+  //   overlap: 0.5,
+  //   cornerRadius: 0,
+  //   centerHue: 28,
+  //   edgeHue: 36,
+  //   satCenter: 88,
+  //   satEdge: 50,
+  //   lightCenter: 58,
+  //   lightEdge: 72,
+  //   glowStrength: 0.09,
+  //   driftAmount: 0.025,
+  //   misregister: 0.16,
+  // },
+
+  peony: {
+    cycleDuration: 6900,
+    ringSoftness: 0.12,
+    pulseAmount: 0.045,
+    grid: 9,
+    overlap: 0.5,
     cornerRadius: 0,
-    centerHue: 18,
-    edgeHue: 52,
-    glowStrength: 0.1,
-    driftAmount: 0.02,
+    centerHue: 8,
+    edgeHue: 336,
+    satCenter: 82,
+    satEdge: 42,
+    lightCenter: 56,
+    lightEdge: 76,
+    glowStrength: 0.08,
+    driftAmount: 0.025,
     misregister: 0.16,
   },
-  "deep-sea": {
-    cycleDuration: 8200,
-    ringSoftness: 0.18,
-    pulseAmount: 0.025,
+
+  sun: {
+    cycleDuration: 6500,
+    ringSoftness: 0.11,
+    pulseAmount: 0.05,
     grid: 9,
-    overlap: 0.35,
+    overlap: 0.5,
     cornerRadius: 0,
-    centerHue: 205,
-    edgeHue: 245,
-    glowStrength: 0.06,
-    driftAmount: 0.015,
-    misregister: 0.14,
+    centerHue: 38,
+    edgeHue: 54,
+    satCenter: 92,
+    satEdge: 60,
+    lightCenter: 58,
+    lightEdge: 76,
+    glowStrength: 0.1,
+    driftAmount: 0.02,
+    misregister: 0.15,
   },
-  "mono-bloom": {
-    cycleDuration: 7200,
+
+  sky: {
+    cycleDuration: 7600,
     ringSoftness: 0.14,
     pulseAmount: 0.03,
     grid: 9,
     overlap: 0.45,
     cornerRadius: 0,
-    centerHue: 230,
-    edgeHue: 250,
-    glowStrength: 0.04,
-    driftAmount: 0.01,
-    misregister: 0.08,
-    satCenter: 30,
-    satEdge: 12,
+    centerHue: 200,
+    edgeHue: 210,
+    satCenter: 82,
+    satEdge: 48,
+    lightCenter: 56,
+    lightEdge: 70,
+    glowStrength: 0.07,
+    driftAmount: 0.02,
+    misregister: 0.15,
+  },
+
+  lilac: {
+    cycleDuration: 7200,
+    ringSoftness: 0.13,
+    pulseAmount: 0.035,
+    grid: 9,
+    overlap: 0.5,
+    cornerRadius: 0,
+    centerHue: 275,
+    edgeHue: 295,
+    satCenter: 70,
+    satEdge: 40,
+    lightCenter: 60,
+    lightEdge: 74,
+    glowStrength: 0.07,
+    driftAmount: 0.02,
+    misregister: 0.14,
+  },
+
+  grass: {
+    cycleDuration: 7200,
+    ringSoftness: 0.13,
+    pulseAmount: 0.03,
+    grid: 9,
+    overlap: 0.5,
+    cornerRadius: 0,
+    centerHue: 110,
+    edgeHue: 88,
+    satCenter: 82,
+    satEdge: 46,
+    lightCenter: 48,
+    lightEdge: 76,
+    glowStrength: 0.06,
+    driftAmount: 0.02,
+    misregister: 0.14,
   },
 };
 
@@ -163,6 +221,11 @@ function clamp(value, min, max) {
 
 function lerp(a, b, t) {
   return a + (b - a) * t;
+}
+
+function lerpHue(a, b, t) {
+  const delta = ((b - a + 540) % 360) - 180;
+  return (a + delta * t + 360) % 360;
 }
 
 function smoothstep(edge0, edge1, x) {
@@ -260,7 +323,9 @@ function drawLayer(
   const inner = size - settings.padding * 2;
   const cell = inner / settings.grid;
   const half = (settings.grid - 1) / 2;
-  const maxDist = Math.hypot(half, half);
+
+  // Small optical bias inspired by the prints
+  const maxDist = Math.hypot(half * 1.1, half * 0.9);
 
   const startX = (width - inner) * 0.5;
   const startY = (height - inner) * 0.5;
@@ -280,8 +345,8 @@ function drawLayer(
 
   for (let row = 0; row < settings.grid; row++) {
     for (let col = 0; col < settings.grid; col++) {
-      const dx = col - cx;
-      const dy = row - cy;
+      const dx = (col - cx) * 1.1;
+      const dy = (row - cy) * 0.9;
       const dist = Math.hypot(dx, dy) / maxDist;
 
       const radial = Math.pow(1 - clamp(dist, 0, 1), settings.falloff);
@@ -299,7 +364,8 @@ function drawLayer(
 
       if (life <= 0.001) continue;
 
-      const hue = lerp(settings.centerHue, settings.edgeHue, dist) + hueOffset;
+      const hue =
+        lerpHue(settings.centerHue, settings.edgeHue, dist) + hueOffset;
 
       const hueDrift =
         Math.sin(col * 0.45 - row * 0.3 + cycle.raw * Math.PI * 2) * 3.5;
