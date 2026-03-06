@@ -8,28 +8,56 @@ description: I came across a PNG of this image on a subreddit where someone was 
 tags: ["generative"]
 css:
   - custom.css
+  - /_/css/panel.css
 js:
   - custom.js
 links:
   - https://www.reddit.com/r/AdobeIllustrator/comments/1nxwece/how_can_i_recreate_this/
 ---
+
 <div class="shell">
-  <aside class="sidebar">
-    <div class="controls">
-      <div class="row">
-        <label for="sides"><strong>Polygon sides</strong></label>
-        <input id="sides" type="range" min="3" max="64" value="12" />
-        <span id="sidesLabel" class="sidesValue">12-gon</span>
+  <aside class="panel" aria-label="Editor">
+    <section class="panel__section">
+      <div class="field field--select">
+        <label class="field__label" for="shapeMode">Shape</label>
+        <select id="shapeMode" class="field__control">
+          <option value="polygon" selected>Polygon</option>
+          <option value="circle">Circle</option>
+        </select>
       </div>
-      <div class="row">
-        <button id="save">Save PNG</button>
+      <div class="field field--range">
+        <div class="field__head">
+          <label class="field__label" for="sides">Polygon sides</label>
+          <output id="sidesLabel" class="field__meta">12-gon</output>
+        </div>
+        <input id="sides" class="range" type="range" min="3" max="64" value="12" />
       </div>
-      <!--
-      <small>
-        Processing math: start at 6 dots, add 3 per row, use row diameter for spacing &amp; height.
-      </small>
-      -->
-    </div>
+    </section>
+    <section class="panel__section">
+      <div class="panel__sectionHead">
+        <h3 class="panel__sectionTitle">Export</h3>
+        <label class="toggle" title="Lock aspect ratio (8:11)">
+          <input id="lockAspect" type="checkbox" checked />
+          <span>Lock</span>
+        </label>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label class="field__label" for="exportW">W</label>
+          <input id="exportW" class="field__control" type="number" inputmode="numeric" min="64" step="1" value="800" />
+        </div>
+        <div class="field">
+          <label class="field__label" for="exportH">H</label>
+          <input id="exportH" class="field__control" type="number" inputmode="numeric" min="64" step="1" value="1100" />
+        </div>
+      </div>
+      <p class="hint">Download uses your chosen size and keeps the poster ratio.</p>
+    </section>
+    <footer class="panel__footer">
+      <button id="save" class="btn btn--primary" type="button">
+        Download PNG
+      </button>
+    </footer>
   </aside>
 
   <section class="stage">

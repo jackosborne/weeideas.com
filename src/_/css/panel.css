@@ -1,0 +1,301 @@
+/* ui/panel.css */
+
+/* =========
+   Tokens
+   ========= */
+:root {
+  --panel-w: 360px;
+  --panel-r: 6px;
+  --panel-pad: 18px;
+
+  --panel-bg: rgba(255, 255, 255, 0.92);
+  --panel-text: #111;
+  --panel-subtle: rgba(0, 0, 0, 0.55);
+  --panel-line: rgba(0, 0, 0, 0.1);
+
+  --shadow-lg: 0 16px 60px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.1);
+
+  --accent: #2f6bff;
+  --focus: 0 0 0 3px color-mix(in oklab, var(--accent) 30%, transparent);
+
+  --control-h: 40px;
+  --control-r: 14px;
+  --control-bg: rgba(0, 0, 0, 0.04);
+  --control-bg-hover: rgba(0, 0, 0, 0.065);
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --panel-bg: rgba(18, 18, 18, 0.88);
+    --panel-text: #f2f2f2;
+    --panel-subtle: rgba(255, 255, 255, 0.65);
+    --panel-line: rgba(255, 255, 255, 0.1);
+
+    --shadow-lg: 0 16px 60px rgba(0, 0, 0, 0.55);
+    --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.45);
+
+    --control-bg: rgba(255, 255, 255, 0.07);
+    --control-bg-hover: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* =========
+     Panel
+     ========= */
+.panel {
+  inline-size: min(100%, var(--panel-w));
+  background: var(--panel-bg);
+  color: var(--panel-text);
+  border-radius: var(--panel-r);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--panel-line);
+  overflow: clip;
+  backdrop-filter: blur(10px);
+}
+
+.panel__header {
+  margin: 0;
+  padding: var(--panel-pad);
+}
+
+.panel__title {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.panel__section {
+  padding: var(--panel-pad);
+  border-top: 1px solid var(--panel-line);
+  display: grid;
+  gap: 14px;
+}
+
+.panel__section:not(:has(+ .panel__header)) {
+  border-top: none;
+}
+
+.panel__sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panel__sectionTitle {
+  margin: 0;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.panel__footer {
+  border-top: 1px solid var(--panel-line);
+  padding: 12px var(--panel-pad);
+  /* position: sticky; */
+  inset-block-end: 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--panel-bg) 65%, transparent),
+    var(--panel-bg)
+  );
+}
+
+/* =========
+     Fields
+     ========= */
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.field__label {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.field__meta {
+  color: var(--panel-subtle);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Controls */
+.field__control {
+  inline-size: 100%;
+  min-block-size: var(--control-h);
+  border-radius: var(--control-r);
+  border: 1px solid transparent;
+  background: var(--control-bg);
+  color: inherit;
+  padding: 10px 12px;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.field__control:hover {
+  background: var(--control-bg-hover);
+}
+
+.field__control:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+  border-color: color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+/* Dropdown affordance: “discoverable on hover” */
+.field--select {
+  position: relative;
+}
+.field--select::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 12px;
+  inset-block-start: calc(50% + 10px);
+  translate: 0 -50%;
+  inline-size: 10px;
+  block-size: 10px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  rotate: 45deg;
+  opacity: 0.25;
+  pointer-events: none;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+.field--select:hover::after,
+.field--select:has(select:focus-visible)::after {
+  opacity: 0.7;
+  transform: translateY(1px);
+}
+.field--select select {
+  appearance: none;
+  padding-inline-end: 36px;
+}
+
+/* =========
+     Minimal range (PhotoGradient-ish)
+     ========= */
+.range {
+  inline-size: 100%;
+  appearance: none;
+  block-size: 28px;
+  background: transparent;
+}
+
+.range::-webkit-slider-runnable-track {
+  block-size: 4px;
+  background: color-mix(in oklab, var(--panel-text) 18%, transparent);
+  border-radius: 999px;
+}
+.range::-webkit-slider-thumb {
+  appearance: none;
+  inline-size: 18px;
+  block-size: 18px;
+  border-radius: 999px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-line);
+  box-shadow: var(--shadow-md);
+  margin-top: -7px;
+}
+.range:focus-visible {
+  outline: none;
+}
+.range:focus-visible::-webkit-slider-thumb {
+  box-shadow: var(--shadow-md), var(--focus);
+}
+
+/* Firefox */
+.range::-moz-range-track {
+  block-size: 4px;
+  background: color-mix(in oklab, var(--panel-text) 18%, transparent);
+  border-radius: 999px;
+}
+.range::-moz-range-thumb {
+  inline-size: 18px;
+  block-size: 18px;
+  border-radius: 999px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-line);
+  box-shadow: var(--shadow-md);
+}
+
+/* =========
+     Buttons
+     ========= */
+.btn {
+  inline-size: 100%;
+  min-block-size: 44px;
+  border-radius: 16px;
+  border: 1px solid var(--panel-line);
+  background: var(--control-bg);
+  color: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    transform 0.06s ease,
+    background 0.15s ease;
+}
+.btn:hover {
+  background: var(--control-bg-hover);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+
+.btn--primary {
+  background: var(--panel-text);
+  color: var(--panel-bg);
+  border-color: transparent;
+}
+@media (prefers-color-scheme: dark) {
+  .btn--primary {
+    background: #f1f1f1;
+    color: #111;
+  }
+}
+
+/* =========
+     Helpers used by the panel markup
+     ========= */
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.toggle {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  user-select: none;
+  color: var(--panel-subtle);
+  font-size: 0.95rem;
+}
+.toggle input {
+  inline-size: 16px;
+  block-size: 16px;
+  accent-color: var(--accent);
+}
+
+.hint {
+  margin: 0;
+  color: var(--panel-subtle);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
