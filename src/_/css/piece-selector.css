@@ -3,6 +3,7 @@ body#project .project .content:is([data-project='winamp'], [data-project='ipod']
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
+  overflow: hidden;
 }
 :is([data-project='winamp'], [data-project='ipod']) .artwork-stack {
   display: grid;

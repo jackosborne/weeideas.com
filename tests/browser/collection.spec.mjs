@@ -76,7 +76,14 @@ test('arrows respect collection boundaries and keyboard activation switches piec
 test('stepper keeps its nodes and animates the outgoing and incoming widths', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/on-repeat/winamp/');
+  expect(
+    await page
+      .locator('.piece-selector')
+      .evaluate((element) => getComputedStyle(element).getPropertyValue('--pill-duration').trim()),
+  ).toBe('500ms');
   await page.evaluate(() => {
+    // Slow the test timeline so delayed CI frames cannot miss the transition.
+    document.querySelector('.piece-selector').style.setProperty('--pill-duration', '10s');
     const pill = document.querySelector('.piece-selector__step span');
     window.originalPill = pill;
     window.pillTransitions = [];
@@ -90,7 +97,7 @@ test('stepper keeps its nodes and animates the outgoing and incoming widths', as
       transition.pause();
       transition.currentTime = transition.effect.getTiming().duration / 2;
       window.pillTransitions.push(pill.getBoundingClientRect().width);
-      transition.play();
+      transition.finish();
     });
   });
   await switchTo(page, 'iPod');
@@ -102,6 +109,9 @@ test('stepper keeps its nodes and animates the outgoing and incoming widths', as
   ).toBe(true);
   const samples = await page.evaluate(() => window.pillTransitions);
   expect(samples.some((width) => width > 8 && width < 28)).toBe(true);
+  await page.locator('.piece-selector__step span').evaluateAll((pills) => {
+    for (const pill of pills) for (const animation of pill.getAnimations()) animation.finish();
+  });
   await expect
     .poll(() =>
       selected(page, 'Winamp').evaluate(
