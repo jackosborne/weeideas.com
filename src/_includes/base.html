@@ -7,18 +7,22 @@
     <meta name="robots" content="index, follow" />
     {% include "partials/meta.html" %}
     <link rel="stylesheet" href="/_/css/style.css" />
+    {% if controls %}
+    <link rel="stylesheet" href="/_/vendor/dialkit/styles.css" />
+    <link rel="stylesheet" href="/_/css/controls.css" />
+    {% endif %}
     {% if css %} {% for href in css %}
-    <link rel="stylesheet" href="{{ href | url }}" />
+    <link rel="stylesheet" href="{{ href | projectAsset: page.url | url }}" />
     {% endfor %} {% endif %}
   </head>
   {% if page.url == '/' %} {% assign bodyId = 'home' %} {% else %} {% assign
   bodyId = 'project' %} {% endif %}
   <body id="{{ bodyId }}" class="wrap">
-    <header>{% include "partials/header.html" %}</header>
+    <header class="site-header">{% include "partials/header.html" %}</header>
     <main id="main">{{ content }}</main>
-    <footer>{% include "partials/footer.html" %}</footer>
+    <footer class="site-footer">{% include "partials/footer.html" %}</footer>
     {% if js %} {% for src in js %}
-    <script src="{{ page.url }}{{ src | url }}" type="module" defer></script>
+    <script src="{{ src | projectAsset: page.url | url }}" type="module" defer></script>
     {% endfor %} {% endif %} {% if page.url == '/' %}
     <script src="/_/js/master.js" type="module" defer></script>
     {% endif %}

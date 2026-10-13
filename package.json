@@ -7,16 +7,32 @@
     "url": "https://weeideas.com/"
   },
   "scripts": {
-    "start": "npx @11ty/eleventy --serve",
-    "build": "npx @11ty/eleventy"
+    "start": "node scripts/prepare-vendor.mjs && eleventy --serve",
+    "build": "node scripts/prepare-vendor.mjs && node scripts/validate.mjs && node scripts/clean.mjs && eleventy",
+    "check": "npm run build && node scripts/check-site.mjs && npm run test:unit",
+    "new": "node scripts/new-project.mjs",
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "test:browser": "playwright test",
+    "test": "npm run test:unit && npm run test:browser",
+    "build:test": "node scripts/prepare-vendor.mjs && node scripts/clean.mjs _test-site && eleventy --output=_test-site",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "license": "MIT",
   "devDependencies": {
     "@11ty/eleventy": "^3.1.2",
-    "@11ty/eleventy-img": "^6.0.4",
-    "@11ty/eleventy-navigation": "^1.0.4",
-    "@11ty/eleventy-plugin-rss": "^2.0.4",
-    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.2",
-    "@quasibit/eleventy-plugin-sitemap": "^2.2.0"
-  }
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.64.0",
+    "@quasibit/eleventy-plugin-sitemap": "^2.2.0",
+    "dialkit": "2.0.1",
+    "js-yaml": "5.4.3",
+    "parse5": "7.3.0",
+    "pixi.js": "7.4.3",
+    "postcss": "8.5.30",
+    "prettier": "3.9.10"
+  },
+  "engines": {
+    "node": ">=20.17.0"
+  },
+  "type": "module"
 }

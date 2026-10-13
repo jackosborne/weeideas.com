@@ -12,3 +12,14 @@ _site/
 # Local env files (if you ever add them)
 .env
 .env.*
+# macOS metadata
+.DS_Store
+
+# Generated from the pinned Dialkit package by start/build
+src/_/vendor/
+
+# Isolated development and regression output
+_dev/
+_test-site/
+test-results/
+playwright-report/

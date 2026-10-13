@@ -1,4 +1,5 @@
 ---
+draft: true
 title: Whit yi' wantin'
 permalink: /whit-yi-wantin/
 #bg:

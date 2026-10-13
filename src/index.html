@@ -1,5 +1,5 @@
 ---
-layout: base.html
+layout: home.html
 #title: Home
 ---
 
@@ -18,40 +18,6 @@ layout: base.html
   </article>
 
   {% for post in collections.post reversed %}
-    {% comment %} Build a space-separated list of facet tags for the card (excluding base tags) {% endcomment %}
-    {% assign facetTags = "" %}
-    {% if post.data.tags %}
-      {% for t in post.data.tags %}
-        {% unless t == "post" or t == "posts" or t == "work" %}
-          {% if facetTags == "" %}
-            {% assign facetTags = t %}
-          {% else %}
-            {% assign facetTags = facetTags | append: " " | append: t %}
-          {% endif %}
-        {% endunless %}
-      {% endfor %}
-    {% endif %}
-
-    <article class="card" data-tags="{{ facetTags }}">
-      <a class="thumb" href="{{ post.url }}" aria-label="{{ post.data.title }}">
-        <div class="photo">
-          <div class="item" style="{{ post.data.bg }}"></div>
-        </div>
-      </a>
-      <h2 class="card__title">{{ post.data.title }}</h2>
-      <p class="card__desc small">{{ post.data.teaser }}</p>
-
-      {% comment %}
-      <ul class="tags small">
-        {% if post.data.tags %}
-          {% for t in post.data.tags %}
-            {% unless t == "post" or t == "posts" or t == "work" %}
-              <li>{{ t }}</li>
-            {% endunless %}
-          {% endfor %}
-        {% endif %}
-      </ul>
-      {% endcomment %}
-    </article>
+    {% include "components/project-card.html" %}
   {% endfor %}
 </section>

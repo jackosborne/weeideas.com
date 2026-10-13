@@ -1,73 +1,32 @@
-:root {
-  --art-paper: #f6f3ef;
-  --ink-1: 232;
-  --ink-2: 292;
-  --ink-3: 205;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --panel-bg: #1b1b1b;
-    --art-paper: #4a4a4f;
+@scope ([data-project="in-bloom"]) {
+  :scope {
+    --artboard-panel-width: 320px;
   }
-}
-
-.shell {
-  display: grid;
-  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
-  gap: 24px;
-  inline-size: 100%;
-  padding: 24px clamp(1rem, 4vw, 2rem);
-  box-sizing: border-box;
-  align-items: center;
-}
-
-.shell > * {
-  min-width: 0;
-}
-
-.frame {
-  width: min(100%, 760px);
-  aspect-ratio: 1;
-  padding: 4.5%;
-  box-sizing: border-box;
-
-  display: grid;
-  place-items: center;
-  justify-self: center;
-}
-
-.frame canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-#art {
-  display: block;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 4px;
-  background: #fff;
-}
-
-@media (max-width: 900px) {
-  .shell {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    padding: 16px;
+  :scope .shell {
     align-items: start;
   }
-
-  .panel {
-    position: static;
-    inline-size: 100%;
-    max-inline-size: 320px;
-    margin-inline: auto;
-  }
-
-  .frame {
+  :scope #art {
     width: 100%;
-    max-width: 640px;
+    height: 100%;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    background: #fff;
+  }
+  .dialkit-folder-root > .dialkit-folder-content > .dialkit-folder-inner {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .dialkit-folder-root > .dialkit-folder-content > .dialkit-folder-inner > * {
+    grid-column: 1 / -1;
+  }
+  .dialkit-folder-root
+    > .dialkit-folder-content
+    > .dialkit-folder-inner
+    > [data-action-path='reset'],
+  .dialkit-folder-root
+    > .dialkit-folder-content
+    > .dialkit-folder-inner
+    > [data-action-path='randomise'] {
+    grid-column: auto;
   }
 }

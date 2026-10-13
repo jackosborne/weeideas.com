@@ -1,0 +1,90 @@
+/* Shared desktop composition: centre the controls and artwork as one group. */
+.artboard {
+  min-inline-size: 0;
+  --artboard-panel-width: 320px;
+  --artboard-gap: 48px;
+}
+.artboard .shell {
+  display: grid;
+  grid-template-columns: minmax(0, var(--artboard-panel-width)) minmax(0, 1fr);
+  gap: var(--artboard-gap);
+  inline-size: 100%;
+  max-inline-size: calc(var(--artboard-panel-width) + var(--artwork-width) + var(--artboard-gap));
+  margin-inline: auto;
+  padding: 24px 0;
+  align-items: start;
+}
+.artboard .shell > * {
+  min-inline-size: 0;
+}
+.artboard .shell > .panel {
+  inline-size: min(100%, var(--panel-w, 320px));
+}
+@media (max-width: 900px) {
+  .artboard .shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px;
+    align-items: start;
+  }
+  .artboard .shell > .panel {
+    max-inline-size: 320px;
+    margin-inline: auto;
+    position: static;
+  }
+}
+
+.artboard {
+  --artwork-width: var(--artwork-medium);
+  --artwork-ratio: 1;
+}
+.artboard[data-artwork-size='small'] {
+  --artwork-width: var(--artwork-small);
+}
+.artboard[data-artwork-size='large'] {
+  --artwork-width: var(--artwork-large);
+}
+.artboard[data-artwork-ratio='portrait'] {
+  --artwork-ratio: 8 / 11;
+}
+.artboard .artwork-frame {
+  inline-size: min(100%, var(--artwork-width));
+  aspect-ratio: var(--artwork-ratio);
+  min-inline-size: 0;
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  position: relative;
+}
+.artboard .artwork-stack {
+  inline-size: min(100%, var(--artwork-width));
+  min-inline-size: 0;
+}
+.artboard .artwork-stack > .artwork-frame {
+  inline-size: 100%;
+}
+.artboard .shell > .artwork-frame {
+  align-self: start;
+}
+/* Stacked artwork uses the same available width as artwork-only projects. */
+@media (max-width: 900px) {
+  .artboard .shell {
+    padding-inline: 0;
+  }
+}
+
+/* Supplementary artwork instructions share one position and type treatment. */
+.artboard .artwork-note {
+  max-inline-size: 52ch;
+  margin: 16px auto 0;
+  color: var(--muted);
+  font-family: var(--font-family-ui);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-align: center;
+}
+.artboard .artwork-note :is(strong, b) {
+  font-weight: 600;
+}

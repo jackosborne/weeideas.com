@@ -1,0 +1,24 @@
+    {% comment %} Build a space-separated list of facet tags for the card (excluding base tags) {% endcomment %}
+    {% assign facetTags = "" %}
+    {% if post.data.tags %}
+      {% for t in post.data.tags %}
+        {% unless t == "post" or t == "posts" or t == "work" %}
+          {% if facetTags == "" %}
+            {% assign facetTags = t %}
+          {% else %}
+            {% assign facetTags = facetTags | append: " " | append: t %}
+          {% endif %}
+        {% endunless %}
+      {% endfor %}
+    {% endif %}
+
+    <article class="card" data-tags="{{ facetTags }}">
+      <a class="thumb" href="{{ post.url }}" aria-label="{{ post.data.title | escape }}">
+        <div class="photo">
+          <div class="item" style="{{ post.data.bg | escape }}{% if post.data.preview %} background-image: url('{{ post.data.preview | projectAsset: post.url | url | escape }}');{% endif %}"></div>
+        </div>
+      </a>
+      <h2 class="card__title">{{ post.data.title | escape }}</h2>
+      <p class="card__desc small">{{ post.data.teaser | escape }}</p>
+
+    </article>

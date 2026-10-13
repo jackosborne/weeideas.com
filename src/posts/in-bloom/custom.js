@@ -1,5 +1,9 @@
-const canvas = document.getElementById("art");
-const ctx = canvas.getContext("2d");
+import { createArtworkLifecycle } from '/_/js/lib/lifecycle.js';
+import { createProjectControls } from '/_/js/lib/controls.js';
+import { animate, downloadCanvas } from '/_/js/lib/artwork.js';
+const lifecycle = createArtworkLifecycle();
+const canvas = document.getElementById('art');
+const ctx = canvas.getContext('2d');
 
 const settings = {
   grid: 9,
@@ -177,33 +181,7 @@ const presets = {
 
 const defaults = structuredClone(settings);
 
-const ui = {
-  preset: document.getElementById("preset"),
-
-  speed: document.getElementById("speed"),
-  spread: document.getElementById("spread"),
-  softness: document.getElementById("softness"),
-  pulse: document.getElementById("pulse"),
-
-  gridSize: document.getElementById("gridSize"),
-  overlap: document.getElementById("overlap"),
-  roundness: document.getElementById("roundness"),
-
-  speedValue: document.getElementById("speed-value"),
-  spreadValue: document.getElementById("spread-value"),
-  softnessValue: document.getElementById("softness-value"),
-  pulseValue: document.getElementById("pulse-value"),
-
-  gridSizeValue: document.getElementById("gridSize-value"),
-  overlapValue: document.getElementById("overlap-value"),
-  roundnessValue: document.getElementById("roundness-value"),
-
-  resetBtn: document.getElementById("reset"),
-  randomBtn: document.getElementById("randomise"),
-  exportBtn: document.getElementById("export"),
-};
-
-let activePreset = ui.preset?.value || "twilight";
+let activePreset = 'twilight';
 
 function resize() {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -282,40 +260,19 @@ function drawGlow(width, height, cycle) {
   const cx = width * 0.5;
   const cy = height * 0.5;
 
-  const gradient = ctx.createRadialGradient(
-    cx,
-    cy,
-    0,
-    cx,
-    cy,
-    width * settings.glowRadius,
-  );
+  const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, width * settings.glowRadius);
 
   const glowAlpha = settings.glowStrength * cycle.bloom;
 
-  gradient.addColorStop(
-    0,
-    `hsla(${settings.centerHue} 95% 60% / ${glowAlpha})`,
-  );
-  gradient.addColorStop(
-    0.4,
-    `hsla(${settings.centerHue} 95% 60% / ${glowAlpha * 0.28})`,
-  );
+  gradient.addColorStop(0, `hsla(${settings.centerHue} 95% 60% / ${glowAlpha})`);
+  gradient.addColorStop(0.4, `hsla(${settings.centerHue} 95% 60% / ${glowAlpha * 0.28})`);
   gradient.addColorStop(1, `hsla(${settings.centerHue} 95% 60% / 0)`);
 
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 }
 
-function drawLayer(
-  cycle,
-  hueOffset,
-  xOffset,
-  yOffset,
-  alphaScale,
-  xBias,
-  yBias,
-) {
+function drawLayer(cycle, hueOffset, xOffset, yOffset, alphaScale, xBias, yBias) {
   const width = canvas.getBoundingClientRect().width;
   const height = canvas.getBoundingClientRect().height;
 
@@ -330,15 +287,9 @@ function drawLayer(
   const startX = (width - inner) * 0.5;
   const startY = (height - inner) * 0.5;
 
-  const cx =
-    half +
-    Math.sin(cycle.raw * Math.PI * 2 * 0.5) * settings.driftAmount +
-    xBias;
+  const cx = half + Math.sin(cycle.raw * Math.PI * 2 * 0.5) * settings.driftAmount + xBias;
 
-  const cy =
-    half +
-    Math.cos(cycle.raw * Math.PI * 2 * 0.45) * settings.driftAmount +
-    yBias;
+  const cy = half + Math.cos(cycle.raw * Math.PI * 2 * 0.45) * settings.driftAmount + yBias;
 
   ctx.save();
   ctx.translate(xOffset, yOffset);
@@ -364,25 +315,19 @@ function drawLayer(
 
       if (life <= 0.001) continue;
 
-      const hue =
-        lerpHue(settings.centerHue, settings.edgeHue, dist) + hueOffset;
+      const hue = lerpHue(settings.centerHue, settings.edgeHue, dist) + hueOffset;
 
-      const hueDrift =
-        Math.sin(col * 0.45 - row * 0.3 + cycle.raw * Math.PI * 2) * 3.5;
+      const hueDrift = Math.sin(col * 0.45 - row * 0.3 + cycle.raw * Math.PI * 2) * 3.5;
 
       const sat = lerp(settings.satCenter, settings.satEdge, dist);
       const light = lerp(settings.lightCenter, settings.lightEdge, dist);
 
       const alpha =
-        lerp(settings.alphaCenter, settings.alphaEdge, dist) *
-        radial *
-        life *
-        alphaScale;
+        lerp(settings.alphaCenter, settings.alphaEdge, dist) * radial * life * alphaScale;
 
       if (alpha <= 0.002) continue;
 
-      const pulse =
-        1 + Math.sin(cycle.raw * Math.PI * 2 - dist * 6) * settings.pulseAmount;
+      const pulse = 1 + Math.sin(cycle.raw * Math.PI * 2 - dist * 6) * settings.pulseAmount;
 
       const swell = radial * cycle.bloom * settings.swell;
 
@@ -431,161 +376,149 @@ function draw(time = 0) {
     -0.025,
     0.025,
   );
-
-  requestAnimationFrame(draw);
 }
 
-/* -------------------------
-   UI helpers
-------------------------- */
+// Dialkit is an inline visitor-facing panel, scoped to this experiment.
+const artboard = canvas.closest('.artboard');
+const status = document.getElementById('project-status');
+const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+let exportPending = false;
+let lastFrame = 0;
 
-function formatValue(key, value) {
-  switch (key) {
-    case "speed":
-      return `${Number(value).toFixed(1)}s`;
-    case "spread":
-    case "softness":
-    case "pulse":
-    case "overlap":
-      return Number(value).toFixed(2);
-    case "gridSize":
-    case "roundness":
-      return `${Math.round(Number(value))}`;
-    default:
-      return String(value);
-  }
+function renderCurrentFrame() {
+  // A meaningful still composition for reduced motion, even at page load.
+  draw(motionPreference.matches ? settings.cycleDuration * 0.55 : lastFrame);
 }
 
-function updateValueLabels() {
-  if (!ui.speedValue) return;
-
-  ui.speedValue.textContent = formatValue("speed", ui.speed.value);
-  ui.spreadValue.textContent = formatValue("spread", ui.spread.value);
-  ui.softnessValue.textContent = formatValue("softness", ui.softness.value);
-  ui.pulseValue.textContent = formatValue("pulse", ui.pulse.value);
-
-  ui.gridSizeValue.textContent = formatValue("gridSize", ui.gridSize.value);
-  ui.overlapValue.textContent = formatValue("overlap", ui.overlap.value);
-  ui.roundnessValue.textContent = formatValue("roundness", ui.roundness.value);
-}
-
-function syncSettingsFromUI() {
-  settings.cycleDuration = Number(ui.speed.value) * 1000;
-  settings.spread = Number(ui.spread.value);
-  settings.ringSoftness = Number(ui.softness.value);
-  settings.pulseAmount = Number(ui.pulse.value);
-
-  settings.grid = Number(ui.gridSize.value);
-  settings.overlap = Number(ui.overlap.value);
-  settings.cornerRadius = Number(ui.roundness.value);
-}
-
-function syncUIFromSettings() {
-  ui.speed.value = (settings.cycleDuration / 1000).toFixed(1);
-  ui.spread.value = settings.spread ?? 0.7;
-  ui.softness.value = settings.ringSoftness;
-  ui.pulse.value = settings.pulseAmount;
-
-  ui.gridSize.value = settings.grid;
-  ui.overlap.value = settings.overlap;
-  ui.roundness.value = settings.cornerRadius;
-
-  updateValueLabels();
+function panelValues() {
+  return {
+    preset: activePreset,
+    bloom: {
+      speed: settings.cycleDuration / 1000,
+      spread: settings.spread ?? 0.7,
+      softness: settings.ringSoftness,
+      pulse: settings.pulseAmount,
+    },
+    grid: {
+      size: settings.grid,
+      overlap: settings.overlap,
+      roundness: settings.cornerRadius,
+    },
+  };
 }
 
 function applyPreset(name) {
-  const preset = presets[name];
-  if (!preset) return;
-
+  if (!presets[name]) return;
   activePreset = name;
-
-  Object.assign(settings, defaults, preset);
-
-  if (settings.spread === undefined) {
-    settings.spread = 0.7;
-  }
-
-  syncUIFromSettings();
+  Object.assign(settings, defaults, presets[name], { spread: 0.7 });
+  kit.setValues(panelValues());
 }
 
 function randomBetween(min, max, decimals = 2) {
-  const value = Math.random() * (max - min) + min;
-  return Number(value.toFixed(decimals));
-}
-
-function randomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Number((Math.random() * (max - min) + min).toFixed(decimals));
 }
 
 function randomiseSettings() {
   settings.cycleDuration = randomBetween(4.5, 9.5, 1) * 1000;
-  settings.spread = randomBetween(0.45, 1, 2);
-  settings.ringSoftness = randomBetween(0.06, 0.22, 2);
-  settings.pulseAmount = randomBetween(0.01, 0.08, 2);
-
-  settings.grid = randomInt(5, 12);
-  settings.overlap = randomBetween(0, 1.2, 2);
-  settings.cornerRadius = randomInt(0, 16);
-
-  syncUIFromSettings();
+  settings.spread = randomBetween(0.45, 1);
+  settings.ringSoftness = randomBetween(0.06, 0.22);
+  settings.pulseAmount = randomBetween(0.01, 0.08);
+  settings.grid = Math.floor(Math.random() * 8) + 5;
+  settings.overlap = randomBetween(0, 1.2);
+  settings.cornerRadius = Math.floor(Math.random() * 17);
+  kit.setValues(panelValues());
 }
 
-function exportPNG() {
-  const link = document.createElement("a");
-  link.download = "in-bloom.png";
-  link.href = canvas.toDataURL("image/png");
-  link.click();
+async function exportPNG() {
+  if (exportPending) return;
+  exportPending = true;
+  kit.setActionBusy('export', true);
+  status.textContent = 'Preparing PNG…';
+  try {
+    renderCurrentFrame();
+    await downloadCanvas(canvas, 'in-bloom.png');
+    status.textContent = 'PNG download started.';
+  } catch (error) {
+    status.textContent = `Could not export PNG: ${error.message}`;
+  } finally {
+    exportPending = false;
+    kit.setActionBusy('export', false);
+  }
 }
 
-function bindUI() {
-  if (!ui.preset) return;
-
-  if (settings.spread === undefined) {
-    settings.spread = 0.7;
-  }
-
-  ui.preset.addEventListener("change", (event) => {
-    applyPreset(event.target.value);
-  });
-
-  [
-    ui.speed,
-    ui.spread,
-    ui.softness,
-    ui.pulse,
-    ui.gridSize,
-    ui.overlap,
-    ui.roundness,
-  ].forEach((input) => {
-    input.addEventListener("input", () => {
-      syncSettingsFromUI();
-      updateValueLabels();
-    });
-  });
-
-  if (ui.resetBtn) {
-    ui.resetBtn.addEventListener("click", () => {
-      applyPreset(activePreset);
-    });
-  }
-
-  if (ui.randomBtn) {
-    ui.randomBtn.addEventListener("click", () => {
-      randomiseSettings();
-    });
-  }
-
-  if (ui.exportBtn) {
-    ui.exportBtn.addEventListener("click", () => {
-      exportPNG();
-    });
-  }
-
-  applyPreset(activePreset);
-}
-
-window.addEventListener("resize", resize);
+const kit = createProjectControls(
+  'In Bloom',
+  {
+    preset: {
+      type: 'select',
+      options: ['twilight', 'sky', 'lilac', 'peony', 'sun', 'grass'].map((value) => ({
+        value,
+        label: value[0].toUpperCase() + value.slice(1),
+      })),
+      default: 'twilight',
+    },
+    bloom: {
+      speed: [7, 3, 12, 0.1],
+      spread: [0.7, 0.2, 1, 0.01],
+      softness: [0.12, 0.02, 0.4, 0.01],
+      pulse: [0.04, 0, 0.12, 0.01],
+    },
+    grid: {
+      size: [9, 3, 20, 1],
+      overlap: [0.5, 0, 2, 0.05],
+      roundness: [0, 0, 24, 1],
+    },
+    reset: { type: 'action', label: 'Reset' },
+    randomise: { type: 'action', label: 'Randomise' },
+    export: { type: 'action', label: 'Export PNG' },
+  },
+  {
+    primaryAction: 'export',
+    valueText: {
+      'bloom.speed': (value) => `${value.toFixed(1)} seconds per cycle`,
+      'bloom.spread': (value) => `${Math.round(value * 100)} percent`,
+      'grid.size': (value) => `${value} by ${value} tiles`,
+      'grid.overlap': (value) => `${value.toFixed(2)} pixels`,
+      'grid.roundness': (value) => `${value} pixels`,
+    },
+    onAction(action) {
+      if (action === 'reset') applyPreset(activePreset);
+      if (action === 'randomise') randomiseSettings();
+      if (action === 'export') void exportPNG();
+    },
+  },
+);
 
 resize();
-bindUI();
-draw();
+const unsubscribe = kit.subscribe((values) => {
+  if (values.preset !== activePreset) {
+    applyPreset(values.preset);
+    return;
+  }
+  Object.assign(settings, {
+    cycleDuration: values.bloom.speed * 1000,
+    spread: values.bloom.spread,
+    ringSoftness: values.bloom.softness,
+    pulseAmount: values.bloom.pulse,
+    grid: values.grid.size,
+    overlap: values.grid.overlap,
+    cornerRadius: values.grid.roundness,
+  });
+  renderCurrentFrame();
+});
+
+function resizeArtwork() {
+  resize();
+  renderCurrentFrame();
+}
+lifecycle.listen(window, 'resize', resizeArtwork);
+lifecycle.observeResize(canvas.closest('.artwork-frame'), resizeArtwork);
+animate(
+  (time) => {
+    lastFrame = time;
+    renderCurrentFrame();
+  },
+  artboard,
+  { signal: lifecycle.signal },
+);
+lifecycle.cleanup(unsubscribe);

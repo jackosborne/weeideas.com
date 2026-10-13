@@ -1,28 +1,21 @@
+import { createArtworkLifecycle } from '/_/js/lib/lifecycle.js';
+import { createProjectControls } from '/_/js/lib/controls.js';
+import { downloadCanvas } from '/_/js/lib/artwork.js';
 (() => {
-  if (window.__POLYPOSTER_INITED) return;
-  window.__POLYPOSTER_INITED = true;
+  const lifecycle = createArtworkLifecycle();
 
-  const canvas = document.getElementById("cnv");
-  const ctx = canvas.getContext("2d");
+  const canvas = document.getElementById('cnv');
+  const ctx = canvas.getContext('2d');
   const wrap = canvas.parentElement;
 
-  const saveBtn = document.getElementById("save");
-  const sidesEl = document.getElementById("sides");
-  const sidesLb = document.getElementById("sidesLabel");
+  const status = document.getElementById('project-status');
+  let values = { shape: 'polygon', sides: 12, output: { width: 800, height: 1100, lock: true } };
+  let exportPending = false;
 
-  const shapeEl = document.getElementById("shapeMode");
-
-  const exportWEl = document.getElementById("exportW");
-  const exportHEl = document.getElementById("exportH");
-  const lockEl = document.getElementById("lockAspect");
-
-  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  let dpr = Math.max(1, window.devicePixelRatio || 1);
 
   // Canvas aspect: 11:8 ≈ 1.375 (portrait)
   const ASPECT = 1.375;
-
-  const labelForSides = (n) =>
-    n === 3 ? "triangle" : n === 4 ? "square" : `${n}-gon`;
 
   function unitPolygonPath(sides) {
     const s = Math.max(3, Math.min(512, sides | 0));
@@ -39,7 +32,7 @@
   }
 
   function drawShape(targetCtx, x, y, r, sides, mode, polyCache) {
-    if (mode === "circle") {
+    if (mode === 'circle') {
       targetCtx.beginPath();
       targetCtx.arc(x, y, r, 0, Math.PI * 2);
       targetCtx.fill();
@@ -58,6 +51,7 @@
   }
 
   function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
     const w = wrap.clientWidth || 0;
     const h = wrap.clientHeight || 0;
 
@@ -68,8 +62,8 @@
 
     canvas.width = Math.max(1, Math.floor(cssW * dpr));
     canvas.height = Math.max(1, Math.floor(cssH * dpr));
-    canvas.style.width = cssW + "px";
-    canvas.style.height = cssH + "px";
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
   }
 
   function renderTo(targetCanvas, targetCtx, cssW, cssH, pixelRatio) {
@@ -80,17 +74,14 @@
     targetCanvas.height = Math.max(1, H);
 
     targetCtx.setTransform(1, 0, 0, 1, 0, 0);
-    targetCtx.fillStyle = "#fff";
+    targetCtx.fillStyle = '#fff';
     targetCtx.fillRect(0, 0, W, H);
 
     targetCtx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    targetCtx.fillStyle = "#1A1A1A";
+    targetCtx.fillStyle = '#1A1A1A';
 
-    const sides = +sidesEl.value || 12;
-    const mode = shapeEl ? shapeEl.value : "polygon";
-
-    sidesLb.textContent = mode === "circle" ? "circle" : labelForSides(sides);
-    sidesEl.disabled = mode === "circle";
+    const sides = values.sides;
+    const mode = values.shape;
 
     // Pattern
     let numberOfDots = 6;
@@ -133,37 +124,24 @@
     return Math.max(min, Math.min(max, n));
   }
 
-  function syncExportFromW() {
-    const w = clampInt(exportWEl.value);
-    exportWEl.value = w;
-    if (lockEl.checked) {
-      exportHEl.value = Math.round(w * ASPECT);
+  async function savePNG() {
+    if (exportPending) return;
+    exportPending = true;
+    kit.setActionBusy('download', true);
+    status.textContent = 'Preparing PNG…';
+    const outW = clampInt(values.output.width);
+    const outH = clampInt(values.output.height);
+    try {
+      const out = document.createElement('canvas');
+      renderTo(out, out.getContext('2d'), outW, outH, 1);
+      await downloadCanvas(out, `polyposter_${outW}x${outH}.png`);
+      status.textContent = 'PNG download started.';
+    } catch (error) {
+      status.textContent = `Could not export PNG: ${error.message}`;
+    } finally {
+      exportPending = false;
+      kit.setActionBusy('download', false);
     }
-  }
-
-  function syncExportFromH() {
-    const h = clampInt(exportHEl.value);
-    exportHEl.value = h;
-    if (lockEl.checked) {
-      exportWEl.value = Math.round(h / ASPECT);
-    }
-  }
-
-  function savePNG() {
-    // Use chosen export size (CSS pixels)
-    const outW = clampInt(exportWEl.value);
-    const outH = clampInt(exportHEl.value);
-
-    // Render at 1:1 pixels for predictable output.
-    const out = document.createElement("canvas");
-    const outCtx = out.getContext("2d");
-
-    renderTo(out, outCtx, outW, outH, 1);
-
-    const a = document.createElement("a");
-    a.download = `polyposter_${outW}x${outH}.png`;
-    a.href = out.toDataURL("image/png");
-    a.click();
   }
 
   // ---- Single debounced resize pipeline ----
@@ -171,36 +149,61 @@
   function resizeThenRender() {
     if (rafPending) return;
     rafPending = true;
-    requestAnimationFrame(() => {
+    lifecycle.frame(() => {
       rafPending = false;
       resize();
       render();
     });
   }
 
-  window.addEventListener("resize", resizeThenRender, { passive: true });
-  window.addEventListener("orientationchange", resizeThenRender, {
-    passive: true,
+  lifecycle.listen(window, 'resize', resizeThenRender, { passive: true });
+  lifecycle.observeResize(wrap, resizeThenRender);
+
+  const kit = createProjectControls(
+    'Polyposter',
+    {
+      shape: {
+        type: 'select',
+        options: [
+          { value: 'polygon', label: 'Polygon' },
+          { value: 'circle', label: 'Circle' },
+        ],
+        default: 'polygon',
+      },
+      sides: [12, 3, 64, 1],
+      output: { width: [800, 64, 8192, 1], height: [1100, 64, 8192, 1], lock: true },
+      download: { type: 'action', label: 'Download PNG' },
+    },
+    {
+      primaryAction: 'download',
+      valueText: {
+        sides: (value) => `${value} sides`,
+        'output.width': (value) => `${value} pixels`,
+        'output.height': (value) => `${value} pixels`,
+      },
+      onAction: (action) => {
+        if (action === 'download') void savePNG();
+      },
+    },
+  );
+
+  const unsubscribe = kit.subscribe((next) => {
+    let width = clampInt(next.output.width);
+    let height = clampInt(next.output.height);
+    if (next.output.lock) {
+      if (height !== values.output.height && width === values.output.width) {
+        height = Math.max(88, height);
+        width = Math.round(height / ASPECT);
+      } else {
+        width = Math.min(width, Math.floor(8192 / ASPECT));
+        height = Math.round(width * ASPECT);
+      }
+    }
+    values = { ...next, output: { ...next.output, width, height } };
+    if (width !== next.output.width || height !== next.output.height)
+      kit.setValues({ output: { width, height } });
+    render();
   });
-
-  const mq = window.matchMedia("(max-width: 900px)");
-  if (mq.addEventListener) mq.addEventListener("change", resizeThenRender);
-
-  // UI events
-  [sidesEl, shapeEl, exportWEl, exportHEl, lockEl].forEach((el) => {
-    if (!el) return;
-    el.addEventListener("input", () => {
-      if (el === exportWEl) syncExportFromW();
-      if (el === exportHEl) syncExportFromH();
-      render();
-    });
-  });
-
-  saveBtn.addEventListener("click", savePNG);
-
-  // Init export defaults to match aspect
-  syncExportFromW();
-
-  // First paint
+  lifecycle.cleanup(unsubscribe);
   resizeThenRender();
 })();

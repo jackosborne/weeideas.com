@@ -1,0 +1,52 @@
+/* =========
+   Tokens
+   ========= */
+:root {
+  /* Colours */
+  --bg: #ffffff;
+  --emph: #f5f5f5;
+  --text: #111111;
+  --muted: #707070;
+
+  /* Layout */
+  --maxw: 1440px;
+  --radius: 14px;
+
+  /* Spacing scale (4px base) */
+  --spacing-unit: 4px;
+  --spacing-xxs: calc(2 * var(--spacing-unit)); /* 8px */
+  --spacing-xs: calc(3 * var(--spacing-unit)); /* 12px */
+  --spacing-sm: calc(5 * var(--spacing-unit)); /* 20px */
+  --spacing-md: calc(8 * var(--spacing-unit)); /* 32px */
+  --spacing-lg: calc(15 * var(--spacing-unit)); /* 60px */
+
+  /* Grid + gap */
+  --cols: 12;
+  --span: 6;
+  --gap-row: 3.2rem;
+  --gap-col: 1.6rem;
+
+  /* Type */
+  --font-size-base: 16px;
+  --lh-base: 1.5;
+
+  color-scheme: light dark; /* enable UA dark defaults */
+}
+
+/* System dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e0e0e;
+    --emph: #1a1a1a;
+    --text: #f2f2f2;
+    --muted: #9a9a9a;
+  }
+}
+
+/* Artwork dimensions are independent of the controls and presentation area. */
+:root {
+  --font-family-ui: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --artwork-small: 320px;
+  --artwork-medium: 560px;
+  --artwork-large: 640px;
+}

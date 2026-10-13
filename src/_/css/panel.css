@@ -3,7 +3,7 @@
 /* =========
    Tokens
    ========= */
-:root {
+.artboard {
   --panel-w: 320px;
   --panel-r: 6px;
   --panel-pad: 14px;
@@ -28,7 +28,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  .artboard {
     --panel-bg: rgba(18, 18, 18, 0.88);
     --panel-text: #f2f2f2;
     --panel-subtle: rgba(255, 255, 255, 0.65);
@@ -162,7 +162,7 @@
 }
 
 .field--select::after {
-  content: "";
+  content: '';
   position: absolute;
   inset-inline-end: 12px;
   inset-block-start: calc(50% + 8px);
@@ -246,42 +246,6 @@
      ========= */
 .btn {
   inline-size: 100%;
-  min-block-size: 40px;
-  border-radius: 16px;
-  border: 1px solid var(--panel-line);
-  background: var(--control-bg);
-  color: inherit;
-  font-weight: 650;
-  cursor: pointer;
-  transition:
-    transform 0.06s ease,
-    background 0.15s ease;
-}
-
-.btn:hover {
-  background: var(--control-bg-hover);
-}
-
-.btn:active {
-  transform: translateY(1px);
-}
-
-.btn:focus-visible {
-  outline: none;
-  box-shadow: var(--focus);
-}
-
-.btn--primary {
-  background: var(--panel-text);
-  color: var(--panel-bg);
-  border-color: transparent;
-}
-
-@media (prefers-color-scheme: dark) {
-  .btn--primary {
-    background: #f1f1f1;
-    color: #111;
-  }
 }
 
 /* =========
@@ -313,4 +277,49 @@
   color: var(--panel-subtle);
   font-size: 0.95rem;
   line-height: 1.35;
+}
+
+/* Shared control finish: clear affordances, comfortable targets, stable values. */
+.artboard {
+  --panel-r: 12px;
+  --panel-pad: 20px;
+  --control-h: 44px;
+  --control-r: 8px;
+}
+.panel {
+  box-shadow: var(--shadow-md);
+}
+.panel :is(input, select) {
+  font: inherit;
+}
+.panel__section {
+  gap: 16px;
+}
+.field {
+  gap: 8px;
+}
+.field--select::after {
+  opacity: 0.65;
+}
+.range {
+  min-block-size: 44px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+.range:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+.panel__footer {
+  margin: 0;
+  color: inherit;
+}
+
+.grid2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.panel .field__control {
+  min-inline-size: 0;
 }

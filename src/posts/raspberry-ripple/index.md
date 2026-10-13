@@ -27,10 +27,12 @@ teaser: Doesn't look as cool as it tasted but it satisified my hunger.
 date: 2025-10-20
 description: Sometimes it's fun to put a new spin on old things. This is my intrepreation of what it would look like if I took this British childhood classic, vanilla ice cream with raspberry swirls, and turned it into code.
 tags: ["childhood", "motion"]
+artworkSize: medium
+artworkRatio: square
 css:
   - custom.css
 js:
   - custom.js
 #links:
 ---
-<div class="ripple-box border shadow" data-image="rasp.jpg"></div>
+<div class="ripple-box artwork-frame border shadow" data-image="rasp.jpg"></div>

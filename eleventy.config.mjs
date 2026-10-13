@@ -1,44 +1,44 @@
 // eleventy.config.mjs
-import { IdAttributePlugin, InputPathToUrlTransformPlugin, HtmlBasePlugin } from "@11ty/eleventy";
-import pluginNavigation from "@11ty/eleventy-navigation";
-import sitemap from "@quasibit/eleventy-plugin-sitemap";
-import fs from "node:fs";
-import path from "node:path"; // (optional)
+import { IdAttributePlugin, InputPathToUrlTransformPlugin, HtmlBasePlugin } from '@11ty/eleventy';
+import sitemap from '@quasibit/eleventy-plugin-sitemap';
+import { outputDirectory } from './scripts/lib/paths.mjs';
 
 export default async function (eleventyConfig) {
   // Drafts
-  eleventyConfig.addPreprocessor("drafts", "*", (data) => {
+  eleventyConfig.addPreprocessor('drafts', '*', (data) => {
     if (data.draft) data.title = `${data.title} (draft)`;
-    if (data.draft && process.env.ELEVENTY_RUN_MODE === "build") return false;
+    if (data.draft && process.env.ELEVENTY_RUN_MODE === 'build') return false;
   });
 
   // ──────────────────────────────────────────────────────────
   // Static passthroughs
   // ──────────────────────────────────────────────────────────
-  eleventyConfig.addPassthroughCopy("src/robots.txt");
-  eleventyConfig.addPassthroughCopy({ "src/_": "_" });
-  eleventyConfig.addPassthroughCopy("src/**/custom.css");
-  eleventyConfig.addPassthroughCopy("src/**/custom.js");
-  eleventyConfig.addPassthroughCopy(
-    "src/**/*.{css,js,svg,webp,png,jpg,jpeg,gif,avif,ico,woff,woff2,ttf,otf,mp4,webm}"
+  eleventyConfig.addFilter('dateISO', (value) => new Date(value).toISOString().slice(0, 10));
+  eleventyConfig.addFilter('dateMonth', (value) =>
+    new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })
+      .format(new Date(value))
+      .replace(/ (\d{4})$/, ', $1'),
   );
-
-  // Auto-shim every post folder so assets end up at /<slug>/**
-  const postsDir = "src/posts";
-  if (fs.existsSync(postsDir)) {
-    for (const entry of fs.readdirSync(postsDir, { withFileTypes: true })) {
-      if (!entry.isDirectory()) continue;
-      const slug = entry.name; // e.g. "shiny", "polyposter"
-      eleventyConfig.addPassthroughCopy({
-        [`${postsDir}/${slug}/*.{css,js,svg,webp,png,jpg,jpeg,gif,avif}`]: `${slug}`,
-      });
-    }
+  eleventyConfig.addFilter('projectAsset', (asset, url) =>
+    asset.startsWith('/') || /^https?:/.test(asset) ? asset : `${url}${asset}`,
+  );
+  eleventyConfig.addPassthroughCopy({ 'src/_': '_' });
+  for (const file of ['robots.txt', 'CNAME', 'humans.txt']) {
+    eleventyConfig.addPassthroughCopy({ [`src/${file}`]: file });
   }
+  // Preserve project directories while excluding Markdown and data files.
+  eleventyConfig.addPassthroughCopy(
+    { 'src/posts': '.' },
+    {
+      filter: ['**/*.{css,js,svg,webp,png,jpg,jpeg,gif,avif,mp4,webm}'],
+      dot: false,
+    },
+  );
 
   // ──────────────────────────────────────────────────────────
   // Watch targets
   // ──────────────────────────────────────────────────────────
-  eleventyConfig.addWatchTarget("src/**/*.{css,js,svg,webp,png,jpg,jpeg,gif,avif}");
+  eleventyConfig.addWatchTarget('src/**/*.{css,js,svg,webp,png,jpg,jpeg,gif,avif}');
 
   // ──────────────────────────────────────────────────────────
   // Plugins
@@ -46,27 +46,25 @@ export default async function (eleventyConfig) {
   eleventyConfig.addPlugin(HtmlBasePlugin);
   eleventyConfig.addPlugin(InputPathToUrlTransformPlugin);
   eleventyConfig.addPlugin(IdAttributePlugin);
-  eleventyConfig.addPlugin(pluginNavigation);
   eleventyConfig.addPlugin(sitemap, {
-    lastModifiedProperty: "modified", // optional; otherwise falls back to `date`
+    lastModifiedProperty: 'modified',
     sitemap: {
-      hostname: "https://weeideas.com", // MUST be your live origin
+      hostname: 'https://weeideas.com',
     },
   });
 
   // ──────────────────────────────────────────────────────────
   // Shortcodes
   // ──────────────────────────────────────────────────────────
-  eleventyConfig.addShortcode("currentBuildDate", () => new Date().toISOString());
-  eleventyConfig.addShortcode("currentYear", () => String(new Date().getFullYear()));
+  eleventyConfig.addShortcode('currentYear', () => String(new Date().getFullYear()));
 
   // ──────────────────────────────────────────────────────────
   // Return config
   // ──────────────────────────────────────────────────────────
   return {
-    templateFormats: ["md", "liquid", "html", "11ty.js", "njk"], // 👈 add "njk"
-    markdownTemplateEngine: "liquid",
-    htmlTemplateEngine: "liquid",
-    dir: { input: "src", includes: "_includes", data: "_data", output: "_site" },
+    templateFormats: ['md', 'liquid', 'html', '11ty.js', 'njk'],
+    markdownTemplateEngine: 'liquid',
+    htmlTemplateEngine: 'liquid',
+    dir: { input: 'src', includes: '_includes', data: '_data', output: outputDirectory() },
   };
 }

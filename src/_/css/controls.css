@@ -1,0 +1,102 @@
+/* Shared inline Dialkit surface; loaded only by projects with controls: true. */
+.artboard .project-controls {
+  inline-size: 100%;
+  max-inline-size: 320px;
+  align-self: start;
+}
+.project-controls .dialkit-panel-inline {
+  border: 1px solid var(--dial-border);
+  border-radius: 14px;
+  box-shadow: var(--dial-shadow-collapsed);
+}
+.project-controls [data-versions='false'] .dialkit-panel-toolbar {
+  display: none !important;
+}
+.project-controls svg {
+  flex-shrink: 0;
+}
+.project-controls #project-status {
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+.project-controls #project-status:empty {
+  display: none;
+}
+@media (max-width: 900px) {
+  .artboard .project-controls {
+    margin-inline: auto;
+  }
+}
+
+.controls-disclosure > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-block-size: 44px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+  border-radius: 8px;
+  background: var(--button-surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none;
+}
+.controls-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+.controls-disclosure > summary:hover {
+  background: var(--button-surface-hover);
+}
+.controls-disclosure__icon::before {
+  content: '+';
+  font-size: 18px;
+}
+.controls-disclosure[open] .controls-disclosure__icon::before {
+  content: '−';
+}
+.controls-disclosure[open] > summary {
+  margin-block-end: 12px;
+}
+@media (min-width: 901px) {
+  .controls-disclosure[data-enhanced] > summary {
+    display: none;
+  }
+}
+
+.controls-preview[hidden] {
+  display: none;
+}
+@media (max-width: 900px) {
+  .artboard .shell {
+    position: relative;
+  }
+  .artboard .shell > [data-tweaking-source] {
+    position: absolute;
+    top: -10000px;
+    inline-size: var(--tweaking-source-width);
+    pointer-events: none;
+  }
+  .controls-preview {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    padding: 12px 0;
+    background: var(--emph);
+  }
+  .controls-preview__image {
+    background: #fff;
+    border-radius: 4px;
+  }
+  .artboard .controls-preview__back {
+    min-block-size: 44px;
+  }
+  .project-controls:has(.controls-preview:not([hidden])) [role='slider'],
+  .project-controls:has(.controls-preview:not([hidden])) .dialkit-button {
+    scroll-margin-block-start: 280px;
+  }
+}

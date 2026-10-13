@@ -1,0 +1,74 @@
+/* Dialkit is the visual source for the site's secondary action buttons. */
+:root {
+  --button-surface: rgba(0, 0, 0, 0.04);
+  --button-surface-hover: rgba(0, 0, 0, 0.08);
+  --button-surface-active: rgba(0, 0, 0, 0.1);
+  --button-text: rgba(0, 0, 0, 0.55);
+  --button-text-hover: rgba(0, 0, 0, 0.9);
+  --button-radius: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --button-surface: rgba(255, 255, 255, 0.05);
+    --button-surface-hover: rgba(255, 255, 255, 0.1);
+    --button-surface-active: rgba(255, 255, 255, 0.11);
+    --button-text: rgba(255, 255, 255, 0.6);
+    --button-text-hover: rgba(255, 255, 255, 0.95);
+  }
+}
+.artboard :is(.action-button, .btn) {
+  appearance: none;
+  min-block-size: 0;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--dial-radius, var(--button-radius));
+  background: var(--dial-surface, var(--button-surface));
+  color: var(--dial-text-secondary, var(--button-text));
+  font-family:
+    system-ui,
+    -apple-system,
+    'SF Pro Display',
+    sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+}
+.artboard :is(.action-button, .btn):hover {
+  background: var(--dial-surface-hover, var(--button-surface-hover));
+  color: var(--dial-text-primary, var(--button-text-hover));
+}
+.artboard :is(.action-button, .btn):active {
+  background: var(--dial-surface-active, var(--button-surface-active));
+}
+.artboard :is(.action-button, .btn):focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+.artboard :is(.action-button, .btn):is(:disabled, [aria-disabled='true']) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.artboard :is(.action-button--primary, .btn--primary) {
+  background: var(--text);
+  color: var(--bg);
+}
+.artboard :is(.action-button--primary, .btn--primary):hover,
+.artboard :is(.action-button--primary, .btn--primary):active {
+  background: color-mix(in srgb, var(--text) 85%, var(--bg));
+  color: var(--bg);
+}
+@media (forced-colors: active) {
+  .artboard :is(.action-button, .btn) {
+    border: 1px solid ButtonText;
+  }
+  .artboard :is(.action-button--primary, .btn--primary) {
+    background: ButtonText;
+    color: ButtonFace;
+  }
+}

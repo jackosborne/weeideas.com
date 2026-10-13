@@ -1,55 +1,58 @@
-import * as PIXI from "https://unpkg.com/pixi.js@7/dist/pixi.min.mjs";
+import { createArtworkLifecycle } from '/_/js/lib/lifecycle.js';
+import * as PIXI from '/_/vendor/pixi/index.js';
 
 /* ========= Gentle / Mesmerising Tunables ========= */
 // Visual feel
-const MAX_RIPPLES  = 5;       // fewer concurrent ripples
-const AMPLITUDE    = 0.008;   // slightly lighter touches (0.007–0.009)
-const WAVELENGTH   = 0.24;    // wider rings -> calmer, less busy
-const SPEED        = 3.0;     // still reaches edges, a touch slower
-const DECAY        = 0.52;    // slower fade so rings travel further
+const MAX_RIPPLES = 5; // fewer concurrent ripples
+const AMPLITUDE = 0.008; // slightly lighter touches (0.007–0.009)
+const WAVELENGTH = 0.24; // wider rings -> calmer, less busy
+const SPEED = 3.0; // still reaches edges, a touch slower
+const DECAY = 0.52; // slower fade so rings travel further
 
 // Envelope shaping (seconds)
-const ATTACK       = 0.18;    // soft fade-in so a drop “arrives” gently
-const FADE_TAIL    = 1.20;    // longer release so nothing ends abruptly
+const ATTACK = 0.18; // soft fade-in so a drop “arrives” gently
+const FADE_TAIL = 1.2; // longer release so nothing ends abruptly
 
 // Keep the underlying image readable
-const DISP_CLAMP   = 0.0045;  // soft cap on total displacement (lower = crisper)
+const DISP_CLAMP = 0.0045; // soft cap on total displacement (lower = crisper)
 
 // Autoplay: slow “breathing” cadence
-const AUTOPLAY         = true;
+const AUTOPLAY = true;
 const BASE_INTERVAL_MS = 1200; // average gap between drops
-const MIN_INTERVAL_MS  = 500;  // never spawn faster than this (debounce)
-const BREATH_RATE_HZ   = 0.06; // ~1 cycle every ~16–17s (very slow)
-const BREATH_DEPTH     = 0.35; // 0..1 — how much the breathing modulates the interval
+const MIN_INTERVAL_MS = 500; // never spawn faster than this (debounce)
+const BREATH_RATE_HZ = 0.06; // ~1 cycle every ~16–17s (very slow)
+const BREATH_DEPTH = 0.35; // 0..1 — how much the breathing modulates the interval
 
 // Start with no seed for calm open (set to 1 if you want an initial ripple)
-const SEED_RIPPLES     = 0;
+const SEED_RIPPLES = 0;
 
-const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 
 const TAU = Math.PI * 2;
 const K_GLOBAL = TAU / Math.max(WAVELENGTH, 1e-4);
 
 /* ========= Boot per .ripple-box ========= */
-document.querySelectorAll(".ripple-box").forEach(async (host) => {
+document.querySelectorAll('.ripple-box').forEach(async (host) => {
+  const lifecycle = createArtworkLifecycle();
   const app = new PIXI.Application({ resizeTo: host, backgroundAlpha: 0, antialias: true });
   host.appendChild(app.view);
+  lifecycle.cleanup(() => app.destroy(true));
 
   const tex = await PIXI.Assets.load(host.dataset.image);
+  if (lifecycle.signal.aborted) return;
   const sprite = new PIXI.Sprite(tex);
   sprite.anchor.set(0.5);
   app.stage.addChild(sprite);
 
   function fitCover() {
-    const w = app.renderer.width, h = app.renderer.height;
+    const w = app.renderer.width,
+      h = app.renderer.height;
     const s = Math.max(w / tex.width, h / tex.height);
     sprite.scale.set(s);
     sprite.position.set(w / 2, h / 2);
   }
   fitCover();
-  app.renderer.on("resize", fitCover);
-
-  if (reduceMotion) return;
+  app.renderer.on('resize', fitCover);
 
   /* ========= Shader: attack+release envelope, falloff, clamp ========= */
   const frag = `
@@ -116,14 +119,14 @@ document.querySelectorAll(".ripple-box").forEach(async (host) => {
     uFadeTail: FADE_TAIL,
     uCount: 0,
     uCenters: new Float32Array(MAX_RIPPLES * 2),
-    uStarts:  new Float32Array(MAX_RIPPLES),
-    uLifes:   new Float32Array(MAX_RIPPLES),
+    uStarts: new Float32Array(MAX_RIPPLES),
+    uLifes: new Float32Array(MAX_RIPPLES),
   });
   sprite.filters = [filter];
 
   /* ========= Ripple state ========= */
   const centers = [];
-  const starts  = [];
+  const starts = [];
   const lifetes = []; // lifetimes per ripple
 
   function commitUniforms() {
@@ -134,7 +137,12 @@ document.querySelectorAll(".ripple-box").forEach(async (host) => {
   }
 
   function farCornerDistance(nx, ny) {
-    const corners = [[0,0],[1,0],[0,1],[1,1]];
+    const corners = [
+      [0, 0],
+      [1, 0],
+      [0, 1],
+      [1, 1],
+    ];
     let rFar = 0;
     for (const [cx, cy] of corners) {
       const d = Math.hypot(nx - cx, ny - cy);
@@ -156,7 +164,8 @@ document.querySelectorAll(".ripple-box").forEach(async (host) => {
     if (starts.length > MAX_RIPPLES) {
       starts.shift();
       lifetes.shift();
-      centers.shift(); centers.shift();
+      centers.shift();
+      centers.shift();
     }
     commitUniforms();
   }
@@ -197,11 +206,11 @@ document.querySelectorAll(".ripple-box").forEach(async (host) => {
 
   // --- Instant first ripple; everything else unchanged ---
   app.ticker.addOnce(() => {
-    if (!AUTOPLAY || reduceMotion) return;
+    if (!AUTOPLAY || motionPreference.matches) return;
     const now = app.ticker.lastTime / 1000;
     const p = randPoint();
     addRippleNorm(p.nx, p.ny, now + 0.001); // tiny epsilon avoids age=0 edge cases
-    lastSpawnAt = now;                      // keeps MIN_INTERVAL_MS / cadence intact
+    lastSpawnAt = now; // keeps MIN_INTERVAL_MS / cadence intact
   });
 
   /* ========= Ticker ========= */
@@ -231,4 +240,13 @@ document.querySelectorAll(".ripple-box").forEach(async (host) => {
     }
     if (changed) commitUniforms();
   });
+  function syncPlayback() {
+    filter.enabled = !motionPreference.matches;
+    if (document.hidden || motionPreference.matches) app.stop();
+    else app.start();
+    if (!document.hidden) app.renderer.render(app.stage);
+  }
+  lifecycle.listen(document, 'visibilitychange', syncPlayback);
+  lifecycle.listen(motionPreference, 'change', syncPlayback);
+  syncPlayback();
 });

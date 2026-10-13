@@ -1,0 +1,12 @@
+node_modules/
+_site/
+_dev/
+_test-site/
+src/_/vendor/
+playwright-report/
+test-results/
+package-lock.json
+# Liquid and Markdown HTML includes have deliberate whitespace boundaries.
+src/_includes/
+src/posts/**/index.md
+src/index.html

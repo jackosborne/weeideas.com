@@ -1,17 +1,33 @@
 # weeideas.com
 
-Welcome to the innards of [my website](http://weeideas.com). It’s built using
-[11ty](https://11ty.dev) and deployed on [GitHub Pages](https://pages.github.com/).
+Interactive experiments in code, motion and form, built with Eleventy and deployed to GitHub Pages.
 
-## Installation
+## Develop
 
-If you want to run this site locally:
+Use Node 20.17 or newer:
 
--   Make sure you have [Node](https://nodejs.org/en) installed
--   `git clone https://github.com/jackosborne/weeideas.com`
--   Run `npm install` to install dependencies
--   Run `npm start` to launch the development server.
+```sh
+npm ci
+npm start
+```
 
-## To build for production, run:
+The development server builds into `_dev/` and includes drafts. Production builds go to `_site/`.
 
--   `npm run build`
+## Create an experiment
+
+```sh
+npm run new -- project-slug "Project title"
+```
+
+The starter includes a medium square artwork frame, Dialkit controls and a working canvas. See [design-system.md](design-system.md) for the reusable system and [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow.
+
+## Verify
+
+```sh
+npm run check
+npx playwright install chromium firefox webkit
+npm run test:browser
+npm run format:check
+```
+
+Production checks validate content, parse HTML/CSS, verify local links/assets and run unit tests. Browser regressions use `_test-site/` independently of development and production output. GitHub Actions runs these checks before deploying.
