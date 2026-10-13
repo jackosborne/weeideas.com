@@ -1,11 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import * as yaml from 'js-yaml';
+import { projectDirectories } from './lib/projects.mjs';
 const failures = [];
 const routes = new Set();
-for (const entry of fs.readdirSync('src/posts', { withFileTypes: true })) {
-  if (!entry.isDirectory()) continue;
-  const directory = path.join('src/posts', entry.name);
+for (const directory of projectDirectories('src/posts')) {
   try {
     const source = fs.readFileSync(path.join(directory, 'index.md'), 'utf8');
     const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -63,7 +62,7 @@ for (const entry of fs.readdirSync('src/posts', { withFileTypes: true })) {
         if (!fs.existsSync(filename)) throw Error(`Missing asset: ${asset}`);
       }
   } catch (error) {
-    failures.push(`${entry.name}: ${error.message}`);
+    failures.push(`${path.relative('src/posts', directory)}: ${error.message}`);
   }
 }
 if (failures.length) {

@@ -16,29 +16,29 @@ test('gallery filtering survives history navigation and drafts stay out of produ
   page,
 }) => {
   await page.goto('/');
-  await expect(page.locator('.card[data-tags]')).toHaveCount(6);
+  await expect(page.locator('.card[data-tags]')).toHaveCount(7);
   await expect(page.getByRole('link', { name: 'Practice', exact: true })).toHaveCount(1);
   await expect(page.getByRole('link', { name: 'Raspberry Ripple', exact: true })).toHaveCount(0);
   await expect(page.getByText('Cereal Milk', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Study', exact: true }).click();
-  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(3);
+  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(4);
   await page.getByRole('button', { name: 'Childhood', exact: true }).click();
   await page.goBack();
   await expect(page.getByRole('button', { name: 'Study', exact: true })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
-  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(3);
+  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(4);
 });
 
-test('Interactive filter shows the three interactive projects and survives reload', async ({
+test('Interactive filter shows the four interactive projects and survives reload', async ({
   page,
 }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Interactive', exact: true }).click();
   const cards = page.locator('.card[data-tags]:visible');
-  await expect(cards).toHaveCount(3);
-  for (const title of ['Practice', 'Systematic Surface Design', 'Polyposter']) {
+  await expect(cards).toHaveCount(4);
+  for (const title of ['Practice', 'Systematic Surface Design', 'Polyposter', 'On Repeat']) {
     await expect(cards.getByRole('link', { name: title, exact: true })).toBeVisible();
   }
   await page.reload();
@@ -46,7 +46,7 @@ test('Interactive filter shows the three interactive projects and survives reloa
     'aria-pressed',
     'true',
   );
-  await expect(cards).toHaveCount(3);
+  await expect(cards).toHaveCount(4);
 });
 
 test('wrapped filters have breathing room and stay anchored when results change', async ({

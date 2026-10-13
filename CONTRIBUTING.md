@@ -14,7 +14,7 @@ Use Node 20.17 or newer. Run `npm ci`, then `npm start`. Read design-system.md b
 | `npm run format`       | Format supported source files                                   | Source        |
 | `npm run format:check` | Verify formatting without edits                                 | None          |
 
-Development, production and regression outputs are separate. A production build cannot delete the running preview's files. Test servers use port 8173 and fail rather than reuse an unrelated server.
+Development, production and regression outputs are separate. A production build cannot delete the running preview's files. Test servers use port 8173 and fail rather than reuse an unrelated server. On Repeat collection tests run against the same production regression build.
 
 ## New experiments
 

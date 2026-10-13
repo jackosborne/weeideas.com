@@ -1,0 +1,118 @@
+<div class="artwork-stack"><div class="artwork-frame"><div class="device-space">
+<div class="stage">
+      <section class="ipod" aria-label="iPod music prototype">
+        <div class="device-shadow" aria-hidden="true"></div>
+        <div class="ipod-body">
+          <div class="body-noise" aria-hidden="true"></div>
+          <div class="screen-shell">
+            <div class="screen">
+              <div class="screen-refraction" aria-hidden="true"></div>
+              <div class="screen-ui">
+                <header class="screen-header">
+                  <h3>Now playing</h3>
+                  <div class="battery-container" aria-hidden="true">
+                    <div class="playback-state">
+                      <svg
+                        class="icon-play"
+                        viewBox="0 0 12 12"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M12 6L0 12V0L12 6Z"></path>
+                      </svg>
+                      <svg
+                        class="icon-pause"
+                        viewBox="0 0 12 12"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M4 11H2V1H4V11ZM10 11H8V1H10V11Z"></path>
+                      </svg>
+                    </div>
+                    <div class="battery-inner">
+                      <div class="body">
+                        <div class="charge"></div>
+                        <div class="inner"></div>
+                      </div>
+                      <div class="end"></div>
+                    </div>
+                  </div>
+                </header>
+                <div class="screen-content">
+                  <div class="now-playing-main">
+                    <div class="album-artwork">
+                      <img
+                        src="/on-repeat/ipod/assets/siren.jpg"
+                        width="320"
+                        height="320"
+                        alt="Siren album artwork"
+                      />
+                    </div>
+                    <div class="track-copy">
+                      <p class="track-title">Love is the Drug</p>
+                      <p class="track-artist">Roxy Music</p>
+                      <p class="track-album">Siren</p>
+                    </div>
+                  </div>
+                  <div class="track-progress" aria-label="Song progress">
+                    <span class="track-time" id="elapsed-time">0:00</span>
+                    <div class="progress-rail" aria-hidden="true">
+                      <div class="progress-current" id="progress-current"></div>
+                    </div>
+                    <span class="track-time" id="remaining-time">-4:09</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <section class="click-wheel" aria-label="Playback controls">
+            <div class="wheel-noise" aria-hidden="true"></div>
+            <button
+              class="wheel-button wheel-button-menu"
+              id="menu-button"
+              type="button"
+              aria-label="Menu (unavailable)" disabled
+            >
+              MENU
+            </button>
+            <button
+              class="wheel-button wheel-button-prev"
+              id="prev-button"
+              type="button"
+              aria-label="Seek backward five seconds"
+            >
+              <svg width="20" height="10" viewBox="0 0 20 10" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 10H2V5.5L11 10V5.5L20 10V0L11 4.5V0L2 4.5V0H0V10Z" fill="white" fill-opacity="0.9"></path>
+              </svg>
+            </button>
+            <button
+              class="wheel-button wheel-button-next"
+              id="next-button"
+              type="button"
+              aria-label="Seek forward five seconds"
+            >
+              <svg width="20" height="10" viewBox="0 0 20 10" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 10H18V5.5L9 10V5.5L0 10V0L9 4.5V0L18 4.5V0H20V10Z" fill="white" fill-opacity="0.9"></path>
+              </svg>
+            </button>
+            <button
+              class="wheel-button wheel-button-play"
+              id="play-button"
+              type="button"
+              aria-label="Play or pause"
+            >
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 6L0 12V0L12 6ZM20 11H18V1H20V11ZM26 11H24V1H26V11Z" fill="white" fill-opacity="0.9"></path>
+              </svg>
+            </button>
+            <button
+              class="wheel-center"
+              id="center-button"
+              type="button"
+              aria-label="Center button"
+            ></button>
+          </section>
+        </div>
+      </section>
+    </div>
+</div></div>
+{% include "components/piece-selector.html" %}
+</div>

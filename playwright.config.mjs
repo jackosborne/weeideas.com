@@ -16,14 +16,22 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testMatch: '**/site.spec.mjs',
+      testMatch: ['**/site.spec.mjs', '**/collection.spec.mjs'],
       use: { browserName: 'chromium', channel: process.env.PLAYWRIGHT_CHANNEL || undefined },
     },
-    { name: 'firefox', testMatch: '**/site.spec.mjs', use: { browserName: 'firefox' } },
-    { name: 'webkit', testMatch: '**/site.spec.mjs', use: { browserName: 'webkit' } },
+    {
+      name: 'firefox',
+      testMatch: ['**/site.spec.mjs', '**/collection.spec.mjs'],
+      use: { browserName: 'firefox' },
+    },
+    {
+      name: 'webkit',
+      testMatch: ['**/site.spec.mjs', '**/collection.spec.mjs'],
+      use: { browserName: 'webkit' },
+    },
     {
       name: 'iphone-webkit',
-      testMatch: '**/mobile.spec.mjs',
+      testMatch: ['**/mobile.spec.mjs', '**/collection.spec.mjs'],
       use: { ...devices['iPhone 13'], browserName: 'webkit' },
     },
   ],

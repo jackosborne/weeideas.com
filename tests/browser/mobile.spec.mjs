@@ -174,7 +174,7 @@ test('homepage filters offer 44px touch targets and preserve filtering', async (
   }
   await expect(page.locator('#filters')).toHaveCSS('row-gap', '12px');
   await page.getByRole('button', { name: 'Interactive', exact: true }).tap();
-  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(3);
+  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(4);
 });
 
 test('Practice touch editing updates its preview and returns focus without losing settings', async ({

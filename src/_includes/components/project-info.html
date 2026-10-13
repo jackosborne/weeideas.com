@@ -1,8 +1,8 @@
 <div class="info">
   <div>
     {% if date %}<p class="post__date small"><time datetime="{{ date | dateISO }}">{{ date | dateMonth }}</time></p>{% endif %}
-    <h1 class="post__title">{{ title | escape }}</h1>
-    {% if draft %}<p class="small">Work in progress</p>{% endif %}
+    <h1 class="post__title">{% if collection == "onRepeat" %}{{ onRepeat.title | escape }}{% else %}{{ title | escape }}{% endif %}</h1>
+    {% if draft and collection != "onRepeat" %}<p class="small">Work in progress</p>{% endif %}
   </div>
-  <div>{% if description %}<p>{{ description }}</p>{% endif %}</div>
+  <div>{% if collection == "onRepeat" %}<div class="collection-copy">{% for paragraph in onRepeat.paragraphs %}<p>{{ paragraph | escape }}</p>{% endfor %}</div>{% elsif description %}<p>{{ description }}</p>{% endif %}</div>
 </div>

@@ -1,0 +1,19 @@
+{
+  "title": "On Repeat",
+  "pieces": [
+    {
+      "id": "winamp",
+      "label": "Winamp",
+      "url": "/on-repeat/winamp/"
+    },
+    {
+      "id": "ipod",
+      "label": "iPod",
+      "url": "/on-repeat/ipod/"
+    }
+  ],
+  "paragraphs": [
+    "Changing skins, torrenting songs, meticulously burning CDs, and keeping an iTunes library in order. Tying up the phone line on a Friday night, waiting hours for a download that was almost definitely a virus. Choosing what deserved a place on a device that couldn’t hold everything. Sharing earbuds with friends, making someone a mix, and hearing things you’d never have found on your own.",
+    "A tribute to the tools and rituals that made music feel like mine, and an ongoing experiment in recreating the music interfaces and devices from my past. No audio, just memories. Have a play. It really whipped the llama’s ass."
+  ]
+}
