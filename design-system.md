@@ -107,13 +107,15 @@ Respect reduced motion, do not announce animation frames, and use a polite statu
 
 ## Content and new projects
 
-Published projects need a title, unique permalink, real YYYY-MM-DD date, teaser, description, thumbnail `bg`, and supported facet tags: childhood, generative, motion, study. `draft` and `controls` are booleans; `css`/`js` are lists of local asset paths. Trusted editorial descriptions may contain HTML; titles and metadata summaries are escaped.
+Published projects need a title, unique permalink, real YYYY-MM-DD date, teaser, description, thumbnail `bg`, and supported facet tags: childhood, generative, interactive, motion, study. `draft` and `controls` are booleans; `css`/`js` are lists of local asset paths. Trusted editorial descriptions may contain HTML; titles and metadata summaries are escaped.
 
 `draft: true` is visible in development but excluded from production. Relative assets resolve beneath the project URL; root-relative assets remain global. Preserve published URLs.
 
 Set `hideFromHomepage: true` to omit a project from the gallery in development and production while retaining its direct page (subject to draft exclusion).
 
 Run `npm run new -- project-slug "Project title"`. The starter includes a draft, medium square frame, Dialkit controls and canvas. Replace the drawing and editorial copy, then set `draft: false` and run checks. See CONTRIBUTING.md for commands and verification.
+
+Use `interactive` when visitor interaction is central to the piece, rather than simply because it offers settings. Practice, Systematic Surface Design and Polyposter use this tag.
 
 ## Gallery preview assets
 

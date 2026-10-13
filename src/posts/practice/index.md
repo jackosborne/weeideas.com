@@ -7,7 +7,7 @@ teaser: Find the word by bringing eight rows into alignment.
 description: Practice makes perfect. I wanted to make a little brain teaser about finding your way through trial and error. Adjust each row to bring the word into focus. Some letters might lead you astray, but a little patience and a few more attempts should help everything fall into place.
 preview: preview.svg
 bg: "background: #fff; background-size: contain; background-repeat: no-repeat; background-position: center;"
-tags: [generative, study]
+tags: [generative, study, interactive]
 artworkSize: medium
 artworkRatio: square
 controls: true

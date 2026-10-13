@@ -30,6 +30,41 @@ test('gallery filtering survives history navigation and drafts stay out of produ
   await expect(page.locator('.card[data-tags]:visible')).toHaveCount(3);
 });
 
+test('Interactive filter shows the three interactive projects and survives reload', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Interactive', exact: true }).click();
+  const cards = page.locator('.card[data-tags]:visible');
+  await expect(cards).toHaveCount(3);
+  for (const title of ['Practice', 'Systematic Surface Design', 'Polyposter']) {
+    await expect(cards.getByRole('link', { name: title, exact: true })).toBeVisible();
+  }
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Interactive', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(cards).toHaveCount(3);
+});
+
+test('wrapped filters have breathing room and stay anchored when results change', async ({
+  page,
+}) => {
+  for (const width of [1440, 1920]) {
+    await page.setViewportSize({ width, height: 1200 });
+    await page.goto('/');
+    const filters = page.locator('#filters');
+    const before = await filters.boundingBox();
+    await expect(filters).toHaveCSS('row-gap', '12px');
+    for (const name of ['Childhood', 'Interactive', 'Motion', 'All']) {
+      await page.getByRole('button', { name, exact: true }).click();
+      const after = await filters.boundingBox();
+      expect(Math.abs(after.y - before.y)).toBeLessThan(1);
+    }
+  }
+});
+
 test('artwork frames keep their desktop dimensions and remain proportional on mobile', async ({
   page,
 }) => {

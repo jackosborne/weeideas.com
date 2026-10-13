@@ -48,7 +48,9 @@ for (const entry of fs.readdirSync('src/posts', { withFileTypes: true })) {
       throw Error('Valid YYYY-MM-DD date required');
     if (
       !Array.isArray(data.tags) ||
-      data.tags.some((tag) => !['generative', 'motion', 'childhood', 'study'].includes(tag))
+      data.tags.some(
+        (tag) => !['generative', 'motion', 'childhood', 'study', 'interactive'].includes(tag),
+      )
     )
       throw Error('Use supported facet tags');
     if (!data.permalink || routes.has(data.permalink)) throw Error('Unique permalink required');

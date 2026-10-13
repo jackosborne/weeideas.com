@@ -160,3 +160,16 @@ test('mobile live preview updates for keyboard adjustments under reduced motion'
   await page.getByRole('slider', { name: 'Size', exact: true }).press('ArrowRight');
   await expect.poll(() => preview.evaluate((canvas) => canvas.toDataURL())).not.toBe(before);
 });
+
+test('homepage filters offer 44px touch targets and preserve filtering', async ({ page }) => {
+  await page.goto('/');
+  const buttons = page.locator('#filters .pill');
+  for (const button of await buttons.all()) {
+    const bounds = await button.boundingBox();
+    expect(bounds.width).toBeGreaterThanOrEqual(44);
+    expect(bounds.height).toBeGreaterThanOrEqual(44);
+  }
+  await expect(page.locator('#filters')).toHaveCSS('row-gap', '12px');
+  await page.getByRole('button', { name: 'Interactive', exact: true }).tap();
+  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(3);
+});

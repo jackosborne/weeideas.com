@@ -124,7 +124,7 @@ canvas {
   align-items: start;
 }
 .intro {
-  align-self: flex-end;
+  align-self: start;
   color: var(--muted);
 }
 
@@ -146,7 +146,7 @@ canvas {
 #filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: var(--spacing-xs) 0.4rem;
   margin-top: 0.4rem;
 }
 
@@ -161,6 +161,13 @@ canvas {
     background 150ms ease,
     border-color 150ms ease,
     color 150ms ease;
+}
+
+@media (any-pointer: coarse) {
+  #filters .pill {
+    min-inline-size: 44px;
+    min-block-size: 44px;
+  }
 }
 
 .pill:hover {

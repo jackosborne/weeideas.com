@@ -6,7 +6,7 @@ bg: "background: #fff; background-size: contain; background-repeat: no-repeat; b
 teaser: Moving a slider and seeing things change will never stop being fun.
 date: 2025-10-08
 description: I came across a PNG of this image on a subreddit where someone was asking how to recreate it in Figma. I wanted to push the idea further by rebuilding it in HTML, CSS, and JS, and allowing it to be exported as a PNG. After several iterations and a couple of prompt rewrites, I eventually arrived at this solution.
-tags: ["generative"]
+tags: ["generative", interactive]
 controls: true
 artworkSize: large
 artworkRatio: portrait

@@ -11,7 +11,7 @@ bg: >-
 teaser: Explore how simple geometric forms create near-infinite visual variety.
 date: 2025-11-10
 description: "Inspired by mid-century modular studies and the logic of design systems, this piece nods to a 1980 design aid by Tobias Christoph, which used a structured grid and simple shapes to help designers find optimal surface patterns. Each tile in the 4×4 grid can hold a square, triangle, circle, or remain blank. With just four options per tile, over four billion combinations emerge."
-tags: ["generative", "study"]
+tags: ["generative", "study", interactive]
 artworkSize: medium
 artworkRatio: square
 css:
