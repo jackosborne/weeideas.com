@@ -9,6 +9,7 @@ const routes = [
   'raspberry-ripple',
   'shiny',
   'polyposter',
+  'practice',
 ];
 
 test('gallery filtering survives history navigation and drafts stay out of production', async ({
@@ -204,7 +205,7 @@ test('primary actions are identified by paths even when labels repeat or change'
 test('main controls have no serious or critical automated accessibility violations', async ({
   page,
 }) => {
-  for (const route of ['in-bloom', 'polyposter', 'systematic-surface-design']) {
+  for (const route of ['in-bloom', 'polyposter', 'systematic-surface-design', 'practice']) {
     await page.goto(`/${route}/`);
     const result = await new AxeBuilder({ page }).include('.artboard').analyze();
     expect(
@@ -522,4 +523,71 @@ test('Surface Design provides tile action descriptions and concise operation fee
   await expect(page.locator('#surface-status')).toHaveText(
     'Grid reset. All 16 tiles are empty and unlocked.',
   );
+});
+
+test('Practice supports keyboard solving, hints, reset and a fresh attempt', async ({ page }) => {
+  // Fixed randomness gives a known diagonal puzzle without exposing production internals.
+  await page.addInitScript(() => {
+    window.puzzleRandom = 0.5;
+    Math.random = () => window.puzzleRandom;
+  });
+  await page.goto('/practice/');
+  const canvas = page.locator('#art');
+  const again = page.getByRole('button', { name: 'Again', exact: true });
+  const hint = page.locator('[data-action-path="hint"]');
+  await expect(page.getByRole('slider')).toHaveCount(8);
+  await expect(again).toHaveAttribute('aria-disabled', 'true');
+  const initial = await canvas.evaluate((canvas) => canvas.toDataURL());
+  await again.press('Enter');
+  expect(await canvas.evaluate((canvas) => canvas.toDataURL())).toBe(initial);
+  await hint.press('Enter');
+  await expect(hint).toHaveText('↘ Down and right');
+  const firstRow = page.getByRole('slider', { name: 'Row 1', exact: true });
+  await firstRow.press('ArrowRight');
+  await expect(firstRow).toHaveAttribute('aria-valuenow', '1');
+  await expect.poll(() => canvas.evaluate((canvas) => canvas.toDataURL())).not.toBe(initial);
+  await page.getByRole('button', { name: 'Reset', exact: true }).press('Enter');
+  await expect(firstRow).toHaveAttribute('aria-valuenow', '0');
+  await expect.poll(() => canvas.evaluate((canvas) => canvas.toDataURL())).toBe(initial);
+  await expect(hint).toHaveText('↘ Down and right');
+  for (let row = 1; row <= 8; row++) {
+    await page.getByRole('slider', { name: `Row ${row}`, exact: true }).press('Enter');
+    const input = page.getByRole('textbox', { name: `Row ${row} value`, exact: true });
+    await input.fill('48');
+    await input.press('Enter');
+    await expect(page.getByRole('slider', { name: `Row ${row}`, exact: true })).toHaveAttribute(
+      'aria-valuetext',
+      new RegExp(`upright letters.*${'PRACTICE'[row - 1]} in column ${row}`),
+    );
+  }
+  await expect(canvas).toHaveAttribute('aria-label', /Perfect. PRACTICE is complete/);
+  await expect(again).toHaveAttribute('aria-disabled', 'false');
+  await page.screenshot({ path: '/tmp/weeideas-practice-desktop.png', fullPage: true });
+  await page.evaluate(() => {
+    window.puzzleRandom = 0.9;
+  });
+  await again.press('Enter');
+  await expect(again).toHaveAttribute('aria-disabled', 'true');
+  await expect(hint).toHaveText('Hint');
+  for (const slider of await page.getByRole('slider').all())
+    await expect(slider).toHaveAttribute('aria-valuenow', '0');
+  await expect(canvas).not.toHaveAttribute('aria-label', /Perfect/);
+  expect(await canvas.evaluate((canvas) => canvas.toDataURL())).not.toBe(initial);
+  await hint.press('Enter');
+  await expect(hint).toHaveText('↙ Down and left');
+});
+
+test('social preview metadata points to the available wide image', async ({ page }) => {
+  for (const route of ['/', '/practice/']) {
+    await page.goto(route);
+    const image = page.locator('meta[property="og:image"]');
+    await expect(image).toHaveAttribute('content', 'https://weeideas.com/_/icons/og-1200x630.jpg');
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+      'content',
+      'summary_large_image',
+    );
+    const response = await page.request.get('/_/icons/og-1200x630.jpg');
+    expect(response.ok()).toBe(true);
+    expect(response.headers()['content-type']).toContain('image/jpeg');
+  }
 });

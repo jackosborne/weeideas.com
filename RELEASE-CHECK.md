@@ -1,6 +1,6 @@
 # Release check — 12 October 2026
 
-The release-readiness pass covers Chrome, Firefox and Playwright WebKit, plus iPhone 13 WebKit emulation. The final combined suite passed all 61 checks. The final gallery/Untitled fixes and export comparisons were rechecked across all three desktop engines. Production parsing/content checks, five unit tests, formatting and git whitespace checks also pass.
+The release-readiness pass covers Chrome, Firefox and Playwright WebKit, plus iPhone 13 WebKit emulation. The latest combined suite passed all 75 checks, using installed Chrome for the Chromium project because the bundled Chromium executable was unavailable locally. The final gallery/Untitled fixes and export comparisons were rechecked across all three desktop engines. Production parsing/content checks, seven unit tests, formatting and git whitespace checks also pass.
 
 ## Exports
 
@@ -21,3 +21,9 @@ Touch layouts, permission granted/denied/retry, sensor-event handling, recalibra
 - The grouped desktop layout, mobile disclosure/live preview, file-based gallery previews, value units, focus retention and tile feedback are covered by the final combined suite.
 
 Existing upstream build-tool dependency advisories remain documented in CONTRIBUTING.md. This verification checkpoint does not deploy the site. Actual VoiceOver testing remains pending native-control permission; physical iPhone testing remains pending available hardware.
+
+## Pre-push tidy-up
+
+Practice now has browser coverage for keyboard adjustment, numeric entry, solving a known puzzle, hint persistence, reset, the disabled Again action and starting a different attempt. It is included in desktop/mobile frame checks, mobile disclosure/settings retention, live-preview sizing and automated accessibility checks. An iPhone-emulation check verifies preview updates under reduced motion and focus/settings restoration through Back to artwork. Desktop and mobile Practice screenshots were inspected.
+
+Social previews use the existing 1200 × 630 image at `/_/icons/og-1200x630.jpg`, with a large-image Twitter card; browser checks verify metadata and local image availability on the homepage and Practice. External social-platform rendering remains unverified. Five previously tracked macOS metadata files were removed from Git tracking; local copies remain ignored.

@@ -29,6 +29,7 @@ test('iPhone touch layouts fit all artwork frames without horizontal overflow', 
     'systematic-surface-design',
     'untitled-1972',
     'raspberry-ripple',
+    'practice',
   ]) {
     await page.goto(`/${route}/`);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
@@ -84,6 +85,7 @@ test('shared mobile controls follow artwork, collapse initially and preserve set
   for (const [route, slider] of [
     ['in-bloom', 'Speed'],
     ['polyposter', 'Sides'],
+    ['practice', 'Row 1'],
   ]) {
     await page.goto(`/${route}/`);
     const disclosure = page.locator('.controls-disclosure');
@@ -115,6 +117,7 @@ test('mobile editing keeps a live preview visible at lower sliders without chang
   for (const [route, slider] of [
     ['in-bloom', 'Roundness'],
     ['polyposter', 'Height'],
+    ['practice', 'Row 8'],
   ]) {
     await page.goto(`/${route}/`);
     const original = await page
@@ -172,4 +175,28 @@ test('homepage filters offer 44px touch targets and preserve filtering', async (
   await expect(page.locator('#filters')).toHaveCSS('row-gap', '12px');
   await page.getByRole('button', { name: 'Interactive', exact: true }).tap();
   await expect(page.locator('.card[data-tags]:visible')).toHaveCount(3);
+});
+
+test('Practice touch editing updates its preview and returns focus without losing settings', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/practice/');
+  const summary = page.getByText('Adjust artwork', { exact: true });
+  await summary.tap();
+  const preview = page.locator('.controls-preview__image');
+  await expect.poll(() => preview.evaluate((canvas) => canvas.width)).toBeGreaterThan(100);
+  const before = await preview.evaluate((canvas) => canvas.toDataURL());
+  const row = page.getByRole('slider', { name: 'Row 8', exact: true });
+  await row.press('Enter');
+  const input = page.getByRole('textbox', { name: 'Row 8 value', exact: true });
+  await input.fill('48');
+  await input.press('Enter');
+  await expect.poll(() => preview.evaluate((canvas) => canvas.toDataURL())).not.toBe(before);
+  await page.screenshot({ path: '/tmp/weeideas-practice-mobile.png', fullPage: true });
+  await page.getByRole('button', { name: 'Back to artwork', exact: true }).tap();
+  await expect(summary).toBeFocused();
+  await expect(page.locator('#art')).toBeVisible();
+  await summary.tap();
+  await expect(row).toHaveAttribute('aria-valuenow', '48');
 });
