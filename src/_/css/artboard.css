@@ -59,6 +59,8 @@
   position: relative;
 }
 .artboard .artwork-stack {
+  justify-self: center;
+  margin-inline: auto;
   inline-size: min(100%, var(--artwork-width));
   min-inline-size: 0;
 }

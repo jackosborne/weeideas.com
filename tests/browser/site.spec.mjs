@@ -591,3 +591,13 @@ test('social preview metadata points to the available wide image', async ({ page
     expect(response.headers()['content-type']).toContain('image/jpeg');
   }
 });
+
+test('Practice stays centred in its responsive artboard', async ({ page }) => {
+  for (const width of [390, 768, 900]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto('/practice/');
+    const shell = await page.locator('.artboard .shell').boundingBox();
+    const frame = await page.locator('.artwork-frame').boundingBox();
+    expect(Math.abs(frame.x + frame.width / 2 - (shell.x + shell.width / 2))).toBeLessThan(1);
+  }
+});
