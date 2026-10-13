@@ -18,6 +18,12 @@ Project CSS uses `@scope ([data-project="slug"])`. Declare project variables on 
 
 ## Artwork sizes and layouts
 
+Artwork frames share a 4px corner radius through `--artwork-radius` in `tokens.css`. The shared `.artwork-frame` clips its contents to that radius, keeping canvas and other full-frame artwork consistent. This is a presentation treatment; exported artwork retains its original rectangular bounds.
+
+Artwork frames use white (`#fff`) as the default paper background in both light and dark appearance. The surrounding artboard retains its shared grey surface. A different paper colour should be a deliberate part of the artwork rather than an incidental project default. Match canvas fills, frame CSS and gallery previews.
+
+For typography and geometric studies, leave a generous internal margin: roughly 12–16% of the frame on each side is a useful starting point. Scale the drawing and type together as the margin changes, and check rotated forms and mobile layouts for crowding or clipping. Practice uses 12%; Untitled 1972 and Systematic Surface Design use approximately 16%.
+
 Set these fields in project front matter:
 
 ```yaml
@@ -104,6 +110,8 @@ Respect reduced motion, do not announce animation frames, and use a polite statu
 Published projects need a title, unique permalink, real YYYY-MM-DD date, teaser, description, thumbnail `bg`, and supported facet tags: childhood, generative, motion, study. `draft` and `controls` are booleans; `css`/`js` are lists of local asset paths. Trusted editorial descriptions may contain HTML; titles and metadata summaries are escaped.
 
 `draft: true` is visible in development but excluded from production. Relative assets resolve beneath the project URL; root-relative assets remain global. Preserve published URLs.
+
+Set `hideFromHomepage: true` to omit a project from the gallery in development and production while retaining its direct page (subject to draft exclusion).
 
 Run `npm run new -- project-slug "Project title"`. The starter includes a draft, medium square frame, Dialkit controls and canvas. Replace the drawing and editorial copy, then set `draft: false` and run checks. See CONTRIBUTING.md for commands and verification.
 

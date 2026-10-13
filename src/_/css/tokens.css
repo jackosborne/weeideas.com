@@ -11,6 +11,7 @@
   /* Layout */
   --maxw: 1440px;
   --radius: 14px;
+  --artwork-radius: 4px;
 
   /* Spacing scale (4px base) */
   --spacing-unit: 4px;

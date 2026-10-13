@@ -18,6 +18,8 @@ layout: home.html
   </article>
 
   {% for post in collections.post reversed %}
-    {% include "components/project-card.html" %}
+    {% unless post.data.hideFromHomepage %}
+      {% include "components/project-card.html" %}
+    {% endunless %}
   {% endfor %}
 </section>

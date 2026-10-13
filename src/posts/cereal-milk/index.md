@@ -1,5 +1,6 @@
 ---
 draft: true
+hideFromHomepage: true
 title: Cereal Milk
 permalink: /cereal-milk/
 bg:

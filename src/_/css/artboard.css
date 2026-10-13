@@ -48,6 +48,8 @@
   --artwork-ratio: 8 / 11;
 }
 .artboard .artwork-frame {
+  border-radius: var(--artwork-radius);
+  overflow: hidden;
   inline-size: min(100%, var(--artwork-width));
   aspect-ratio: var(--artwork-ratio);
   min-inline-size: 0;

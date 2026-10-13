@@ -16,16 +16,18 @@ test('gallery filtering survives history navigation and drafts stay out of produ
 }) => {
   await page.goto('/');
   await expect(page.locator('.card[data-tags]')).toHaveCount(6);
+  await expect(page.getByRole('link', { name: 'Practice', exact: true })).toHaveCount(1);
+  await expect(page.getByRole('link', { name: 'Raspberry Ripple', exact: true })).toHaveCount(0);
   await expect(page.getByText('Cereal Milk', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Study', exact: true }).click();
-  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(2);
+  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(3);
   await page.getByRole('button', { name: 'Childhood', exact: true }).click();
   await page.goBack();
   await expect(page.getByRole('button', { name: 'Study', exact: true })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
-  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(2);
+  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(3);
 });
 
 test('artwork frames keep their desktop dimensions and remain proportional on mobile', async ({

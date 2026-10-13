@@ -1,5 +1,6 @@
 ---
 title: Raspberry Ripple
+hideFromHomepage: true
 permalink: /raspberry-ripple/
 bg: "background: #ED213A;
   background-image: linear-gradient(
