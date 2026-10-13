@@ -81,8 +81,16 @@ test('stepper keeps its nodes and animates the outgoing and incoming widths', as
     window.originalPill = pill;
     window.pillTransitions = [];
     pill.addEventListener('transitionrun', (event) => {
-      if (event.propertyName === 'width')
-        window.pillTransitions.push(pill.getBoundingClientRect().width);
+      if (event.propertyName !== 'width') return;
+      const transition = pill
+        .getAnimations()
+        .find((animation) => animation.transitionProperty === 'width');
+      if (!transition) return;
+      // Sample a known point in the real CSS transition, independent of runner speed.
+      transition.pause();
+      transition.currentTime = transition.effect.getTiming().duration / 2;
+      window.pillTransitions.push(pill.getBoundingClientRect().width);
+      transition.play();
     });
   });
   await switchTo(page, 'iPod');
@@ -187,13 +195,17 @@ test('iPod labels describe seeking and keyboard controls expose visible focus', 
 }) => {
   await page.goto('/on-repeat/ipod/');
   await page.getByRole('button', { name: 'Pause playback', exact: true }).click();
+  const beforeSeek = await page.locator('#elapsed-time').textContent();
+  const [minutes, seconds] = beforeSeek.split(':').map(Number);
+  const expectedSeconds = minutes * 60 + seconds + 5;
+  const expectedTime = `${Math.floor(expectedSeconds / 60)}:${String(expectedSeconds % 60).padStart(2, '0')}`;
   const seek = page.getByRole('button', { name: 'Seek forward five seconds', exact: true });
   await page.getByRole('button', { name: 'Seek backward five seconds', exact: true }).focus();
   // WebKit uses Option-Tab to include controls when full keyboard access is off.
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
   await expect(seek).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(page.locator('#elapsed-time')).toHaveText('0:05');
+  await expect(page.locator('#elapsed-time')).toHaveText(expectedTime);
   expect(await seek.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('solid');
   await expect(
     page.getByRole('button', { name: 'Menu (unavailable)', exact: true }),
