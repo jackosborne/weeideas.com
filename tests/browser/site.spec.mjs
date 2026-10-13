@@ -351,7 +351,7 @@ test('Surface Design gallery thumbnail loads its SVG and renders all three shape
     return [
       [150, 50],
       [50, 150],
-      [120, 170],
+      [120, 150],
     ].map(([x, y]) => [...context.getImageData(x, y, 1, 1).data]);
   });
   expect(pixels).toEqual([
@@ -379,14 +379,12 @@ test('responsive controls keep desktop visible and remember mobile disclosure st
   await expect(disclosure).toHaveAttribute('open');
 });
 
-test('Untitled gallery preview loads its dash asset and preserves the repeating grid', async ({
-  page,
-}) => {
+test('Untitled gallery preview loads its contained dash study', async ({ page }) => {
   await page.goto('/');
   const thumbnail = page.locator('a[href="/untitled-1972/"] .item');
   await expect(thumbnail).toHaveCSS('background-image', /untitled-1972\/preview\.svg/);
-  await expect(thumbnail).toHaveCSS('background-repeat', 'repeat');
-  await expect(thumbnail).toHaveCSS('background-size', '20px 21px');
+  await expect(thumbnail).toHaveCSS('background-repeat', 'no-repeat');
+  await expect(thumbnail).toHaveCSS('background-size', 'contain');
   const pixels = await thumbnail.evaluate(async (element) => {
     const image = new Image();
     image.src = getComputedStyle(element)
@@ -394,16 +392,17 @@ test('Untitled gallery preview loads its dash asset and preserves the repeating 
       .replace(/^["']|["']$/g, '');
     await image.decode();
     const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 100;
+    canvas.width = 480;
+    canvas.height = 640;
     const context = canvas.getContext('2d');
-    context.drawImage(image, 0, 0, 100, 100);
+    context.drawImage(image, 0, 0, 480, 640);
     return [
-      [50, 50],
-      [10, 50],
+      [144, 224],
+      [48, 320],
     ].map(([x, y]) => [...context.getImageData(x, y, 1, 1).data]);
   });
   expect(pixels).toEqual([
-    [0, 0, 0, 255],
+    [14, 14, 14, 255],
     [255, 255, 255, 255],
   ]);
 });

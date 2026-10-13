@@ -1,4 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
-  <rect width="100" height="100" fill="#fff" />
-  <line x1="50" y1="30" x2="50" y2="70" stroke="#000" stroke-width="6" stroke-linecap="round" />
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="640" viewBox="0 0 480 640">
+  <rect width="480" height="640" fill="#fff" />
+  <path d="M 144 211 v 26" transform="rotate(0 144 224)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 192 211 v 26" transform="rotate(0 192 224)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 240 211 v 26" transform="rotate(0 240 224)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 288 211 v 26" transform="rotate(0 288 224)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 336 211 v 26" transform="rotate(0 336 224)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 144 259 v 26" transform="rotate(0 144 272)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 192 259 v 26" transform="rotate(0 192 272)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 240 259 v 26" transform="rotate(18 240 272)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 288 259 v 26" transform="rotate(32 288 272)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 336 259 v 26" transform="rotate(12 336 272)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 144 307 v 26" transform="rotate(0 144 320)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 192 307 v 26" transform="rotate(0 192 320)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 240 307 v 26" transform="rotate(18 240 320)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 288 307 v 26" transform="rotate(32 288 320)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 336 307 v 26" transform="rotate(12 336 320)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 144 355 v 26" transform="rotate(0 144 368)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 192 355 v 26" transform="rotate(0 192 368)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 240 355 v 26" transform="rotate(18 240 368)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 288 355 v 26" transform="rotate(32 288 368)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 336 355 v 26" transform="rotate(12 336 368)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 144 403 v 26" transform="rotate(0 144 416)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 192 403 v 26" transform="rotate(0 192 416)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 240 403 v 26" transform="rotate(0 240 416)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 288 403 v 26" transform="rotate(0 288 416)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
+  <path d="M 336 403 v 26" transform="rotate(0 336 416)" stroke="#0e0e0e" stroke-width="5" stroke-linecap="round" />
 </svg>
