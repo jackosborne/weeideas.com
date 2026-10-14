@@ -1,3 +1,4 @@
+import { bindMotionNote } from '/_/js/lib/motion-note.js';
 import { createArtworkLifecycle } from '/_/js/lib/lifecycle.js';
 import { createProjectControls } from '/_/js/lib/controls.js';
 import { animate, downloadCanvas } from '/_/js/lib/artwork.js';
@@ -382,6 +383,7 @@ function draw(time = 0) {
 const artboard = canvas.closest('.artboard');
 const status = document.getElementById('project-status');
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+bindMotionNote(artboard, motionPreference, lifecycle);
 let exportPending = false;
 let lastFrame = 0;
 

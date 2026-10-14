@@ -151,3 +151,10 @@ body#project .project .content:is([data-project='winamp'], [data-project='ipod']
 .collection-copy p + p {
   margin-top: var(--spacing-sm);
 }
+
+[data-project='winamp'] .artwork-stage {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-width: 0;
+}

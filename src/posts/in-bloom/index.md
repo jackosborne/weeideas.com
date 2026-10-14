@@ -20,7 +20,7 @@ links:
 
 <div class="shell">
   {% include "components/controls.html" %}
-  <div class="artwork-frame">
+  <div class="artwork-stack"><div class="artwork-frame">
     <canvas role="img" aria-label="Animated colour grid blooming from the centre. Adjust the labelled controls to change its appearance." id="art"></canvas>
-  </div>
+  </div><p class="artwork-note" data-motion-note hidden role="status" aria-live="polite" aria-atomic="true">Reduced motion is on. The bloom is still; adjustments and export still work.</p></div>
 </div>

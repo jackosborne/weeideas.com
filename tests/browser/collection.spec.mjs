@@ -255,3 +255,18 @@ test('production homepage shows one collection tile with a working preview and n
   await expect(page).toHaveTitle(/On Repeat/);
   expect(await page.title()).not.toContain('(draft)');
 });
+
+test('motion notes explain static effects and follow preference changes', async ({ page }) => {
+  for (const route of ['/on-repeat/winamp/', '/in-bloom/']) {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.goto(route);
+    const note = page.locator('[data-motion-note]');
+    await expect(note).toBeHidden();
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(note).toBeVisible();
+    await expect(note).toContainText('Reduced motion is on.');
+    await expect(note).toHaveAttribute('role', 'status');
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await expect(note).toBeHidden();
+  }
+});

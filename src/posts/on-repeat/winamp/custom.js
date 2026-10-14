@@ -1,7 +1,9 @@
+import { bindMotionNote } from '/_/js/lib/motion-note.js';
 import { createArtworkLifecycle } from '/_/js/lib/lifecycle.js';
 const root = document.querySelector('[data-project="winamp"]');
 const lifecycle = createArtworkLifecycle();
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+bindMotionNote(root, reducedMotion, lifecycle);
 function ownedInterval(callback, delay) {
   const id = window.setInterval(callback, delay);
   lifecycle.cleanup(() => clearInterval(id));
