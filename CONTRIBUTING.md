@@ -20,7 +20,7 @@ Development, production and regression outputs are separate. A production build 
 
 Run `npm run new -- project-slug "Project title"`. The starter creates a working draft with a medium square frame, Dialkit panel and canvas. It refuses to overwrite an existing folder. Project assets are copied recursively, so newly created projects can be added while the preview is running.
 
-Keep drawing code and palette local. Shared templates own page structure; the shared controls helper owns Dialkit integration. Relative custom.css/custom.js resolve beneath the project permalink. See design-system.md for sizing, notes, buttons and lifecycle conventions.
+Keep drawing code and palette local. Shared templates own page structure; the shared controls helper owns Dialkit integration. Relative custom.css/custom.js resolve beneath the project permalink. The base template adds a content hash to project CSS and JavaScript URLs, so a deployed page cannot reuse an earlier cached version of those assets. See design-system.md for sizing, notes, buttons and lifecycle conventions.
 
 ## Regression checks
 

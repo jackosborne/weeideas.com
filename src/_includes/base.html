@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/_/css/controls.css" />
     {% endif %}
     {% if css %} {% for href in css %}
-    <link rel="stylesheet" href="{{ href | projectAsset: page.url | url }}" />
+    <link rel="stylesheet" href="{{ href | versionedProjectAsset: page.url, page.inputPath | url }}" />
     {% endfor %} {% endif %}
   </head>
   {% if page.url == '/' %} {% assign bodyId = 'home' %} {% else %} {% assign
@@ -22,7 +22,7 @@
     <main id="main">{{ content }}</main>
     <footer class="site-footer">{% include "partials/footer.html" %}</footer>
     {% if js %} {% for src in js %}
-    <script src="{{ src | projectAsset: page.url | url }}" type="module" defer></script>
+    <script src="{{ src | versionedProjectAsset: page.url, page.inputPath | url }}" type="module" defer></script>
     {% endfor %} {% endif %} {% if page.url == '/' %}
     <script src="/_/js/master.js" type="module" defer></script>
     {% endif %}

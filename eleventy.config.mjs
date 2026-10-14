@@ -2,6 +2,7 @@
 import { IdAttributePlugin, InputPathToUrlTransformPlugin, HtmlBasePlugin } from '@11ty/eleventy';
 import sitemap from '@quasibit/eleventy-plugin-sitemap';
 import { outputDirectory } from './scripts/lib/paths.mjs';
+import { versionedProjectAsset } from './scripts/lib/asset-version.mjs';
 
 export default async function (eleventyConfig) {
   // Drafts
@@ -22,6 +23,7 @@ export default async function (eleventyConfig) {
   eleventyConfig.addFilter('projectAsset', (asset, url) =>
     asset.startsWith('/') || /^https?:/.test(asset) ? asset : `${url}${asset}`,
   );
+  eleventyConfig.addFilter('versionedProjectAsset', versionedProjectAsset);
   eleventyConfig.addPassthroughCopy({ 'src/_': '_' });
   for (const file of ['robots.txt', 'CNAME', 'humans.txt']) {
     eleventyConfig.addPassthroughCopy({ [`src/${file}`]: file });

@@ -788,3 +788,30 @@ test('Shiny rotates the paper and shadow together without a stationary backing',
     .toBe(0);
   await expect(card).not.toHaveClass(/is-showing-back/);
 });
+
+test('Shiny loads matching versioned styles and scripts instead of stale asset URLs', async ({
+  page,
+}) => {
+  let staleRequests = 0;
+  await page.route(/\/shiny\/custom\.(css|js)$/, (route) => {
+    staleRequests++;
+    return route.fulfill({
+      contentType: route.request().url().endsWith('.css') ? 'text/css' : 'text/javascript',
+      body: '',
+    });
+  });
+  await page.goto('/shiny/');
+  await expect(page.locator('link[href*="/shiny/custom.css"]')).toHaveAttribute(
+    'href',
+    /\?v=[a-f0-9]{12}$/,
+  );
+  await expect(page.locator('script[src*="/shiny/custom.js"]')).toHaveAttribute(
+    'src',
+    /\?v=[a-f0-9]{12}$/,
+  );
+  expect(staleRequests).toBe(0);
+  await expect(page.locator('.card-back')).toHaveCSS('visibility', 'hidden');
+  await expect(page.locator('.still-instructions')).toBeHidden();
+  await page.locator('.card').click();
+  await expect(page.locator('.card-back')).toHaveCSS('visibility', 'visible');
+});

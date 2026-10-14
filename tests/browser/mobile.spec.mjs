@@ -283,3 +283,27 @@ test('Shiny denied activation keeps the front locked until permission is granted
   await card.tap();
   await expect(card).toHaveAttribute('aria-pressed', 'false');
 });
+
+test('Shiny mobile avoids stale asset URLs and keeps the two faces separate', async ({ page }) => {
+  await mockMotion(page, 'granted');
+  let staleRequests = 0;
+  await page.route(/\/shiny\/custom\.(css|js)$/, (route) => {
+    staleRequests++;
+    return route.fulfill({ contentType: 'text/plain', body: '' });
+  });
+  await page.goto('/shiny/');
+  expect(staleRequests).toBe(0);
+  await expect(page.locator('link[href*="/shiny/custom.css"]')).toHaveAttribute(
+    'href',
+    /\?v=[a-f0-9]{12}$/,
+  );
+  await expect(page.locator('.card-back')).toHaveCSS('visibility', 'hidden');
+  await expect(page.locator('.card-back')).toHaveCSS('position', 'absolute');
+  await expect(page.locator('.pointer-instructions')).toBeHidden();
+  await expect(page.locator('.still-instructions')).toBeHidden();
+  await page.locator('.card').tap();
+  await expect(page.locator('.touch-instructions')).toBeVisible();
+  await page.locator('.card').tap();
+  await expect(page.locator('.card-front')).toHaveCSS('visibility', 'hidden');
+  await expect(page.locator('.card-back')).toHaveCSS('visibility', 'visible');
+});
