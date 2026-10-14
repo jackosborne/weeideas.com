@@ -11,6 +11,7 @@ const types = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.ico': 'image/x-icon',
+  '.ttf': 'font/ttf',
 };
 const server = http.createServer((request, response) => {
   try {

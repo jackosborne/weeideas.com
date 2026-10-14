@@ -23,6 +23,16 @@ test('collection entry and direct URLs load local assets and shared metadata', a
       /Recreating the music tools/,
     );
     await expect(page.getByText('Work in progress', { exact: true })).toHaveCount(0);
+    if (slug === 'winamp') {
+      expect(
+        await page.evaluate(async () => {
+          const faces = await document.fonts.load('400 12px "pixelmix"');
+          return faces.length > 0 && faces.every((face) => face.status === 'loaded');
+        }),
+      ).toBe(true);
+      expect((await request.get('/_/fonts/pixelmix/pixelmix.ttf')).ok()).toBe(true);
+      await expect(page.locator('.title-wordmark')).toHaveCSS('font-family', /pixelmix/);
+    }
     if (slug === 'ipod') {
       const cover = page.locator('.album-artwork img');
       await expect(cover).toHaveAttribute('src', '/on-repeat/ipod/assets/siren.jpg');
