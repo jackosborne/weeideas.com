@@ -43,17 +43,24 @@ test('Shiny requests permission after a tap, receives orientation and recalibrat
   await mockMotion(page, 'granted');
   await page.goto('/shiny/');
   await page.locator('.card.final').tap();
-  await expect(page.locator('.motion-hint')).toHaveText('Motion on — tap card to recalibrate');
+  await expect(page.locator('.motion-hint')).toHaveText('Motion on — tap to turn over');
   expect(await page.evaluate(() => window.requestedMotionPermission)).toBe(1);
   await page.evaluate(() => {
     window.emitMotion(0, 0);
     window.emitMotion(10, 10);
   });
-  expect(
-    await page.locator('.card.final').evaluate((el) => el.style.getPropertyValue('--ry')),
-  ).not.toBe('0.00deg');
+  await expect
+    .poll(() =>
+      page
+        .locator('.card.final')
+        .evaluate((el) => Number.parseFloat(el.style.getPropertyValue('--ry'))),
+    )
+    .toBeGreaterThan(0);
   await page.locator('.card.final').tap();
+  await expect(page.locator('.card.final')).toHaveClass(/is-flipped/);
+  await page.getByRole('button', { name: 'Recalibrate motion', exact: true }).tap();
   await page.evaluate(() => window.emitMotion(25, 25));
+  await expect(page.locator('.card.final')).toHaveCSS('--ry', '0.00deg');
   expect(await page.evaluate(() => window.requestedMotionPermission)).toBe(1);
 });
 
@@ -199,4 +206,80 @@ test('Practice touch editing updates its preview and returns focus without losin
   await expect(page.locator('#art')).toBeVisible();
   await summary.tap();
   await expect(row).toHaveAttribute('aria-valuenow', '48');
+});
+
+test('Shiny maps landscape motion and recalibrates without carrying old tilt', async ({ page }) => {
+  await mockMotion(page, 'granted');
+  await page.goto('/shiny/');
+  await page.locator('.card').tap();
+  await page.evaluate(() => {
+    Object.defineProperty(screen.orientation, 'angle', { configurable: true, value: 90 });
+    window.dispatchEvent(new Event('orientationchange'));
+    window.emitMotion(0, 0);
+    window.emitMotion(10, 0);
+  });
+  const card = page.locator('.card');
+  await expect
+    .poll(() => card.evaluate((el) => Number.parseFloat(el.style.getPropertyValue('--ry'))))
+    .toBeGreaterThan(1);
+  await page.getByRole('button', { name: 'Recalibrate motion', exact: true }).tap();
+  await page.evaluate(() => window.emitMotion(25, 5));
+  await expect(card).toHaveCSS('--ry', '0.00deg');
+  await expect(card).toHaveCSS('--rx', '0.00deg');
+});
+
+test('Shiny motion can be turned off and re-enabled without another permission prompt', async ({
+  page,
+}) => {
+  await mockMotion(page, 'granted');
+  await page.goto('/shiny/');
+  await expect(page.locator('.touch-instructions')).toBeHidden();
+  await page.getByRole('button', { name: 'Enable phone motion', exact: true }).tap();
+  await page.evaluate(() => {
+    window.emitMotion(0, 0);
+    window.emitMotion(8, 8);
+  });
+  await expect
+    .poll(() =>
+      page.locator('.card').evaluate((el) => Number.parseFloat(el.style.getPropertyValue('--ry'))),
+    )
+    .toBeGreaterThan(1);
+  await page.getByRole('button', { name: 'Turn off phone motion', exact: true }).tap();
+  await page.evaluate(() => {
+    window.emitMotion(20, 20);
+    window.emitMotion(30, 30);
+  });
+  await expect(page.locator('.card')).toHaveCSS('--ry', '0.00deg');
+  await expect(page.locator('.motion-hint')).toContainText('Phone motion off');
+  await page.getByRole('button', { name: 'Enable phone motion', exact: true }).tap();
+  expect(await page.evaluate(() => window.requestedMotionPermission)).toBe(1);
+  await expect(
+    page.getByRole('button', { name: 'Turn off phone motion', exact: true }),
+  ).toBeVisible();
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.motion-actions')).toBeHidden();
+  await expect(page.locator('.still-instructions')).toBeVisible();
+});
+
+test('Shiny denied activation keeps the front locked until permission is granted', async ({
+  page,
+}) => {
+  await mockMotion(page, 'denied');
+  await page.goto('/shiny/');
+  const card = page.locator('.card');
+  await card.tap();
+  await card.tap();
+  await expect(card).not.toHaveClass(/is-flipped/);
+  await expect(card).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('.motion-recalibrate')).toBeHidden();
+  await page.evaluate(() => {
+    DeviceOrientationEvent.requestPermission = async () => 'granted';
+  });
+  await page.getByRole('button', { name: 'Enable phone motion', exact: true }).tap();
+  await expect(page.locator('.touch-instructions')).toBeVisible();
+  await expect(card).not.toHaveClass(/is-flipped/);
+  await card.tap();
+  await expect(card).toHaveAttribute('aria-pressed', 'true');
+  await card.tap();
+  await expect(card).toHaveAttribute('aria-pressed', 'false');
 });

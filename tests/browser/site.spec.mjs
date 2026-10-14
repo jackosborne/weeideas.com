@@ -601,3 +601,190 @@ test('Practice stays centred in its responsive artboard', async ({ page }) => {
     expect(Math.abs(frame.x + frame.width / 2 - (shell.x + shell.width / 2))).toBeLessThan(1);
   }
 });
+
+test('Shiny keyboard tilt blends foil and Escape settles at rest', async ({ page }) => {
+  await page.goto('/shiny/');
+  const card = page.getByRole('button', { name: 'Reflective football sticker' });
+  await card.focus();
+  await card.press('ArrowRight');
+  await expect
+    .poll(() => card.evaluate((el) => Number(el.style.getPropertyValue('--foil-strength'))))
+    .toBeGreaterThan(0);
+  await expect
+    .poll(() => card.evaluate((el) => Number.parseFloat(el.style.getPropertyValue('--ry'))))
+    .toBeGreaterThan(1);
+  await card.press('Escape');
+  await expect.poll(() => card.evaluate((el) => el.style.getPropertyValue('--ry'))).toBe('0.00deg');
+  await card.press('ArrowLeft');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect.poll(() => card.evaluate((el) => el.style.getPropertyValue('--ry'))).toBe('0.00deg');
+  await card.press('ArrowRight');
+  await expect(card).toHaveCSS('transform', 'none');
+});
+
+test('Shiny facet lighting follows tilt while ink has a restrained separate reflection', async ({
+  page,
+}) => {
+  await page.goto('/shiny/');
+  const card = page.getByRole('button', { name: 'Reflective football sticker' });
+  const faces = page.locator('.foil-facets path');
+  await expect(faces).toHaveCount(12);
+  await card.focus();
+  for (let i = 0; i < 4; i++) await card.press('ArrowRight');
+  await expect
+    .poll(() => card.evaluate((el) => Number.parseFloat(el.style.getPropertyValue('--ry'))))
+    .toBeGreaterThan(7.9);
+  const right = await faces.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('fill')));
+  await expect(page.locator('.card__ink')).toHaveCSS('mask-image', /crest\.png/);
+  expect(
+    await page.locator('.card__ink').evaluate((el) => Number(getComputedStyle(el).opacity)),
+  ).toBeLessThan(0.55);
+  await card.press('Escape');
+  await expect.poll(() => card.evaluate((el) => el.style.getPropertyValue('--ry'))).toBe('0.00deg');
+  await expect(page.locator('.card__ink')).toHaveCSS('opacity', '0');
+  for (let i = 0; i < 4; i++) await card.press('ArrowLeft');
+  await expect
+    .poll(() => card.evaluate((el) => Number.parseFloat(el.style.getPropertyValue('--ry'))))
+    .toBeLessThan(-7.9);
+  expect(
+    await faces.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('fill'))),
+  ).not.toEqual(right);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect.poll(() => card.evaluate((el) => el.style.getPropertyValue('--ry'))).toBe('0.00deg');
+  expect(
+    await faces.evaluateAll((nodes) =>
+      nodes.every((node) => node.getAttribute('fill') === 'rgb(255 255 255 / 0.000)'),
+    ),
+  ).toBe(true);
+});
+
+test('Shiny touch exploration unlocks after activation and vertical swipes scroll', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName !== 'chromium', 'Native touch injection uses Chrome DevTools');
+  await page.setViewportSize({ width: 390, height: 844 });
+  const session = await page.context().newCDPSession(page);
+  await session.send('Emulation.setTouchEmulationEnabled', { enabled: true });
+  await page.addInitScript(() => {
+    window.motionRequests = 0;
+    DeviceOrientationEvent.requestPermission = async () => {
+      window.motionRequests++;
+      return 'granted';
+    };
+  });
+  await page.goto('/shiny/');
+  const card = page.locator('.card');
+  const rect = await card.boundingBox();
+  const start = { x: rect.x + rect.width * 0.3, y: rect.y + rect.height * 0.5 };
+  const send = (type, points) =>
+    session.send('Input.dispatchTouchEvent', { type, touchPoints: points });
+  await send('touchStart', [start]);
+  await send('touchMove', [{ x: start.x + 70, y: start.y + 2 }]);
+  await send('touchEnd', []);
+  expect(await page.evaluate(() => window.motionRequests)).toBe(0);
+  await expect(card).not.toHaveClass(/active|is-flipped/);
+  await page.getByRole('button', { name: 'Enable phone motion', exact: true }).click();
+  await send('touchStart', [start]);
+  await send('touchMove', [{ x: start.x + 70, y: start.y + 2 }]);
+  await expect
+    .poll(() => card.evaluate((el) => Number.parseFloat(el.style.getPropertyValue('--ry'))))
+    .toBeGreaterThan(1);
+  const shadow = await card.evaluate(
+    (el) => getComputedStyle(el.querySelector('.card-front') || el).boxShadow,
+  );
+  await send('touchEnd', []);
+  await expect.poll(() => card.evaluate((el) => el.style.getPropertyValue('--ry'))).toBe('0.00deg');
+  expect(await page.evaluate(() => window.motionRequests)).toBe(1);
+  expect(
+    await card.evaluate((el) => getComputedStyle(el.querySelector('.card-front') || el).boxShadow),
+  ).not.toBe(shadow);
+  const before = await page.evaluate(() => scrollY);
+  await send('touchStart', [start]);
+  for (let i = 1; i <= 5; i++) await send('touchMove', [{ x: start.x + 1, y: start.y - i * 28 }]);
+  await send('touchEnd', []);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before + 30);
+  expect(await page.evaluate(() => window.motionRequests)).toBe(1);
+});
+
+test('Shiny casts its shadow opposite the tilt direction', async ({ page }) => {
+  await page.goto('/shiny/');
+  const card = page.getByRole('button', { name: 'Reflective football sticker' });
+  await card.focus();
+  const shadowX = () =>
+    card.evaluate((el) => {
+      const lengths = [
+        ...getComputedStyle(el.querySelector('.card-front') || el).boxShadow.matchAll(
+          /(-?\d+(?:\.\d+)?)px/g,
+        ),
+      ].map((match) => Number(match[1]));
+      return lengths.at(-4);
+    });
+  for (let i = 0; i < 4; i++) await card.press('ArrowRight');
+  await expect.poll(shadowX).toBeLessThan(-5);
+  for (let i = 0; i < 8; i++) await card.press('ArrowLeft');
+  await expect.poll(shadowX).toBeGreaterThan(5);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect.poll(shadowX).toBe(0);
+});
+
+test('Shiny rests silver and keeps a softer colour tail beyond its reflection angle', async ({
+  page,
+}) => {
+  await page.goto('/shiny/');
+  const card = page.getByRole('button', { name: 'Reflective football sticker' });
+  await expect(page.locator('.foil--default')).toHaveCSS('filter', 'grayscale(1)');
+  await expect(page.locator('.foil--active')).toHaveCSS('opacity', '0');
+  await card.focus();
+  for (let i = 0; i < 4; i++) await card.press('ArrowRight');
+  await expect
+    .poll(() => card.evaluate((el) => Number(el.style.getPropertyValue('--foil-colour'))))
+    .toBeGreaterThan(0.9);
+  for (let i = 0; i < 2; i++) await card.press('ArrowRight');
+  await expect
+    .poll(() => card.evaluate((el) => Number(el.style.getPropertyValue('--foil-colour'))))
+    .toBeLessThan(0.75);
+  expect(
+    await card.evaluate((el) => Number(el.style.getPropertyValue('--foil-colour'))),
+  ).toBeGreaterThan(0.35);
+  await card.press('Escape');
+  await expect.poll(() => card.evaluate((el) => el.style.getPropertyValue('--ry'))).toBe('0.00deg');
+  await expect(page.locator('.foil--active')).toHaveCSS('opacity', '0');
+});
+
+test('Shiny flips both ways by click and keyboard, including reduced motion', async ({ page }) => {
+  await page.goto('/shiny/');
+  const card = page.getByRole('button', { name: 'Reflective football sticker' });
+  await card.click();
+  await expect(card).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.card-front')).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('.card-front')).toHaveCSS('visibility', 'hidden');
+  await expect(page.locator('.card-back')).toHaveCSS('visibility', 'visible');
+  await expect(page.locator('.card-back')).toHaveAttribute('aria-hidden', 'false');
+  await expect(page.locator('.card-number')).toHaveText('33');
+  await card.press('Space');
+  await expect(card).toHaveAttribute('aria-pressed', 'false');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await card.press('Enter');
+  await expect(card).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.card-turn')).toHaveCSS('transition-duration', '0s');
+});
+
+test('Shiny rotates the paper and shadow together without a stationary backing', async ({
+  page,
+}) => {
+  await page.goto('/shiny/');
+  const card = page.locator('.card');
+  await expect(card).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(card).toHaveCSS('box-shadow', 'none');
+  await card.click();
+  await expect
+    .poll(() => card.evaluate((el) => Number.parseFloat(el.style.getPropertyValue('--flip-angle'))))
+    .toBe(180);
+  await expect(card).toHaveClass(/is-showing-back/);
+  await card.click();
+  await expect
+    .poll(() => card.evaluate((el) => Number.parseFloat(el.style.getPropertyValue('--flip-angle'))))
+    .toBe(0);
+  await expect(card).not.toHaveClass(/is-showing-back/);
+});

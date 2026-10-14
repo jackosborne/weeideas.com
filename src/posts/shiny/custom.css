@@ -4,13 +4,15 @@
     --ry: 0deg;
     --px: 50%;
     --py: 50%;
+    --crest-width: 72%;
     --rim: rgba(255, 255, 255, 0.14);
-    --glow-a: rgba(0, 231, 255, 0.45);
-    --glow-b: rgba(247, 89, 228, 0.35);
-    --shadow-rest: 0 22px 40px rgba(0, 0, 0, 0.35);
+    --shadow-x: 0px;
+    --shadow-y: 22px;
+    --shadow-blur: 40px;
+    --shadow-rest: var(--shadow-x) var(--shadow-y) var(--shadow-blur) rgba(0, 0, 0, 0.35);
     --shadow-hover:
-      0 0 0 1px rgba(255, 255, 255, 0.06), 0 0 14px 3px var(--glow-a), 0 0 28px 10px var(--glow-b),
-      0 26px 50px rgba(0, 0, 0, 0.55);
+      0 0 0 1px rgba(255, 255, 255, 0.12),
+      var(--shadow-x) var(--shadow-y) var(--shadow-blur) rgba(0, 0, 0, 0.32);
     --foil-default: url('off.jpg');
     --foil-active: url('on.jpg');
 
@@ -19,51 +21,121 @@
 
   @media (prefers-color-scheme: dark) {
     :scope {
-      --shadow-rest: 0 18px 36px rgba(0, 0, 0, 0.6);
+      --shadow-rest: var(--shadow-x) var(--shadow-y) var(--shadow-blur) rgba(0, 0, 0, 0.6);
       --shadow-hover:
         0 0 0 1px rgba(255, 255, 255, 0.08),
-        0 0 14px 3px color-mix(in oklab, var(--glow-a) 80%, black),
-        0 0 28px 10px color-mix(in oklab, var(--glow-b) 80%, black), 0 30px 60px rgba(0, 0, 0, 0.75);
+        var(--shadow-x) var(--shadow-y) var(--shadow-blur) rgba(0, 0, 0, 0.6);
     }
   }
+  .card-stage {
+    inline-size: min(320px, 70%);
+    aspect-ratio: 80 / 113;
+    perspective: 1000px;
+  }
   .card {
-    inline-size: min(320px, 80%);
+    --foil-strength: 0;
+    --foil-colour: 0;
+    --sheen-x: 50%;
+    --sheen-y: 50%;
+    inline-size: 100%;
     block-size: auto;
     aspect-ratio: 80 / 113;
 
     position: relative;
     border-radius: 2px;
-    background: #d8d8d8;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
     transform-style: preserve-3d;
     transform: rotateX(var(--rx)) rotateY(var(--ry));
-    will-change: transform, box-shadow;
+    will-change: transform;
     backface-visibility: hidden;
-    contain: paint;
-    box-shadow:
-      var(--shadow-rest),
-      inset 0 0 0 1px var(--rim);
-    transition:
-      box-shadow 180ms ease,
-      transform 180ms ease;
-    touch-action: manipulation;
+
+    touch-action: pan-y pinch-zoom;
+    user-select: none;
+    -webkit-user-select: none;
   }
   @media (hover: hover) and (pointer: fine) {
-    .card:hover {
+    .card:hover :is(.card-front, .card-back) {
       box-shadow: var(--shadow-hover);
     }
   }
-  .card.active,
-  .card:focus-visible {
+  .card.active :is(.card-front, .card-back),
+  .card:focus-visible :is(.card-front, .card-back) {
     box-shadow: var(--shadow-hover);
     outline: none;
   }
-  .card:focus-visible {
+  .card:focus-visible :is(.card-front, .card-back) {
     outline: 2px solid #7aa2ff;
     outline-offset: 3px;
+  }
+  .card-turn {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    border-radius: inherit;
+    transform: rotateY(var(--flip-angle, 0deg));
+  }
+  .card-front,
+  .card-back {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    isolation: isolate;
+    box-shadow:
+      var(--shadow-rest),
+      inset 0 0 0 1px var(--rim);
+    overflow: hidden;
+    background: #fff;
+  }
+  .card-front {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card.is-showing-back .card-front {
+    visibility: hidden;
+  }
+  .card.is-showing-back .card-back {
+    visibility: visible;
+  }
+  .card-back {
+    visibility: hidden;
+    transform: rotateY(180deg);
+    container-type: inline-size;
+  }
+  .card .card-back img {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+  .card-number {
+    position: absolute;
+    inset-inline-start: 80%;
+    inset-block-start: 3.5%;
+    inline-size: 15%;
+    block-size: 6%;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    color: #111;
+    font:
+      500 9cqw / 1 Arial,
+      sans-serif;
+  }
+  .card-back::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    background: radial-gradient(
+      ellipse at var(--px) var(--py),
+      rgb(255 255 255 / 0.08),
+      transparent 70%
+    );
   }
   .foil {
     position: absolute;
@@ -79,24 +151,23 @@
 
   .foil--default {
     background-image: var(--foil-default);
+    filter: grayscale(1);
     opacity: 1;
-    transform: translateZ(1px);
   }
 
   .foil--active {
     background-image: var(--foil-active);
-    opacity: 0;
-    transform: translateZ(2px);
+    opacity: var(--foil-colour);
+    filter: saturate(1.45);
+    mask-image: radial-gradient(
+      ellipse at var(--px) var(--py),
+      #000 40%,
+      rgb(0 0 0 / 0.85) 75%,
+      rgb(0 0 0 / 0.35) 100%
+    );
   }
 
-  .card.active .foil--default {
-    opacity: 0;
-  }
-  .card.active .foil--active {
-    opacity: 1;
-  }
-  .card::before,
-  .card::after {
+  .card-front::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -105,76 +176,120 @@
     border-radius: inherit;
     mix-blend-mode: color-dodge;
     background-size: 300% 300%;
-    opacity: 0.2;
-    will-change: background-position, opacity;
-  }
-  .card::before {
+    background-position: var(--sheen-x) var(--sheen-y);
+    opacity: calc(var(--foil-colour) * 0.8);
     background-image: linear-gradient(
       115deg,
-      transparent 0%,
-      rgb(0, 231, 255) 30%,
-      rgb(255, 0, 231) 70%,
-      transparent 100%
+      transparent 28%,
+      rgb(0 231 255 / 0.75) 47%,
+      rgb(247 89 228 / 0.75) 53%,
+      transparent 72%
     );
-    transform: translateZ(10px);
   }
-  .card.active::before {
-    opacity: 1;
-    background-image: linear-gradient(
-      115deg,
-      transparent 0%,
+  :is(.card-front, .card-back)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow:
+      inset 0 0 0 0.65px rgb(255 255 255 / 0.65),
+      inset 0 -1.2px 0 rgb(55 55 55 / 0.4),
+      inset 1px 0 0 rgb(255 255 255 / 0.25);
+  }
+  .foil-facets {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    z-index: 1;
+    pointer-events: none;
+    mix-blend-mode: soft-light;
+  }
+  .card__ink {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    mask: url(crest.png) center / var(--crest-width) auto no-repeat;
+    background: linear-gradient(
+      120deg,
       transparent 25%,
-      rgba(0, 231, 255, 0.7) 45%,
-      rgba(255, 0, 231, 0.7) 55%,
-      transparent 70%,
-      transparent 100%
+      rgb(255 255 255 / 0.18) 48%,
+      transparent 70%
     );
+    background-size: 250% 250%;
+    background-position: var(--sheen-x) var(--sheen-y);
+    opacity: calc(var(--foil-strength) * 0.55);
   }
   .card__glare {
     position: absolute;
     inset: 0;
-    z-index: 3;
+    z-index: 1;
     pointer-events: none;
     border-radius: inherit;
     mix-blend-mode: screen;
     background: radial-gradient(
       220px 220px at var(--px) var(--py),
-      rgba(255, 255, 255, 0.22),
+      rgb(255 255 255 / calc(0.08 + var(--foil-strength) * 0.2)),
       rgba(255, 255, 255, 0) 60%
     );
-    transform: translateZ(30px);
   }
   .card img {
-    inline-size: 240px;
+    inline-size: var(--crest-width);
     block-size: auto;
     z-index: 2;
-    transform: translateZ(20px);
+    display: block;
+    pointer-events: none;
+  }
+  .shiny-instructions {
     display: block;
   }
+  .touch-instructions,
+  .still-instructions,
   .motion-hint {
     display: none;
   }
-
+  :scope.motion-locked .touch-instructions {
+    display: none;
+  }
+  .motion-hint.is-available {
+    display: block;
+  }
+  .motion-actions:not([hidden]) {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-xxs);
+    margin-block-start: var(--spacing-sm);
+  }
+  .motion-toggle {
+    min-block-size: 44px;
+  }
   @media (hover: none) and (pointer: coarse) {
-    .motion-hint {
+    .touch-instructions {
       display: block;
     }
-    .card.motion-pending {
-      filter: grayscale(1) contrast(0.93) brightness(0.92);
+    .pointer-instructions {
+      display: none;
     }
   }
-  .card.motion-enabled {
-    filter: none;
-  }
   @media (prefers-reduced-motion: reduce) {
+    .card-front,
+    .card-back,
+    .card-turn,
+    .foil,
     .card,
-    .card::before,
-    .card::after,
+    .card-front::before,
+    :is(.card-front, .card-back)::after,
     .card__glare {
       transition: none !important;
     }
     .card {
       transform: none !important;
+    }
+    .card :is(.card-front, .card-back) {
       box-shadow:
         var(--shadow-rest),
         inset 0 0 0 1px var(--rim) !important;
@@ -182,17 +297,28 @@
     .motion-hint {
       display: none !important;
     }
-    .card.motion-pending {
-      filter: none !important;
+    .pointer-instructions,
+    .touch-instructions,
+    .motion-actions {
+      display: none !important;
+    }
+    .still-instructions {
+      display: inline;
     }
   }
   @media (forced-colors: active) {
     .card,
-    .card::before,
-    .card::after,
+    .card-front,
+    .card-back,
+    .card-front::before,
+    :is(.card-front, .card-back)::after,
     .card__glare {
       mix-blend-mode: normal;
-      box-shadow: none;
+      box-shadow: none !important;
+    }
+    .foil-facets,
+    .card__ink {
+      display: none;
     }
     .card {
       outline: 2px solid CanvasText;
