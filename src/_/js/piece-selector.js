@@ -2,6 +2,8 @@ import { createArtworkLifecycle } from '/_/js/lib/lifecycle.js';
 
 const lifecycle = createArtworkLifecycle();
 const stages = new Map([[location.pathname, document.querySelector('.artboard')]]);
+const initialized = new Set([location.pathname]);
+const scripts = new Map();
 const selector = document.querySelector('.piece-selector');
 const steps = Array.from(selector.querySelectorAll('.piece-selector__step'));
 const pills = steps.map((step) => step.querySelector('span'));
@@ -52,6 +54,12 @@ async function loadStage(path) {
       });
     }),
   );
+  const script = Array.from(page.querySelectorAll('script[type="module"][src]')).find(
+    (element) =>
+      new URL(element.getAttribute('src'), location.origin).pathname === `${path}custom.js`,
+  );
+  if (!script) throw new Error('Missing piece script');
+  scripts.set(path, new URL(script.getAttribute('src'), location.origin).href);
   stages.set(path, stage);
   return stage;
 }
@@ -79,7 +87,11 @@ async function selectPiece(path, push, focus) {
         }),
       );
       currentPath = path;
-      await import(`${path}custom.js`);
+      // Returning to a retained stage must not initialise a second module instance.
+      if (!initialized.has(path)) {
+        await import(scripts.get(path));
+        initialized.add(path);
+      }
       if (request !== navigation) return;
     }
     if (push && location.pathname !== path) history.pushState(null, '', path);

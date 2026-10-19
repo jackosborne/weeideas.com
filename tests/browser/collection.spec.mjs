@@ -48,8 +48,14 @@ test('collection entry and direct URLs load local assets and shared metadata', a
 test('switching preserves the document, scroll, player state and browser history', async ({
   page,
 }) => {
+  const winampScripts = [];
+  page.on('request', (request) => {
+    if (new URL(request.url()).pathname === '/on-repeat/winamp/custom.js')
+      winampScripts.push(request.url());
+  });
   await page.goto('/on-repeat/winamp/');
   await page.locator('[data-playlist-toggle]').click();
+  await expect(page.locator('[data-playlist-toggle]')).toHaveAttribute('aria-expanded', 'true');
   await page.locator('.piece-selector').scrollIntoViewIfNeeded();
   const before = await page.evaluate(() => {
     window.collectionDocument = document;
@@ -67,6 +73,9 @@ test('switching preserves the document, scroll, player state and browser history
   await expect(page.locator('#play-button')).toHaveAttribute('aria-pressed', 'false');
   await page.goForward();
   await expect(selected(page, 'Winamp')).toHaveAttribute('aria-current', 'page');
+  expect(winampScripts).toHaveLength(1);
+  await page.locator('[data-playlist-toggle]').click();
+  await expect(page.locator('[data-playlist-toggle]')).toHaveAttribute('aria-expanded', 'false');
 });
 
 test('arrows respect collection boundaries and keyboard activation switches pieces', async ({
