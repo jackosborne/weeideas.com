@@ -9,6 +9,7 @@ const types = {
   '.css': 'text/css',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
+  '.webp': 'image/webp',
   '.jpg': 'image/jpeg',
   '.ico': 'image/x-icon',
   '.ttf': 'font/ttf',

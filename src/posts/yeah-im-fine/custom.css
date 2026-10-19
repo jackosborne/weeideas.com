@@ -1,0 +1,12 @@
+@scope ([data-project="yeah-im-fine"]) {
+  #art,
+  .artwork-fallback {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    background: #fff;
+  }
+  [hidden] {
+    display: none;
+  }
+}

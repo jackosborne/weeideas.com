@@ -10,25 +10,26 @@ const routes = [
   'shiny',
   'polyposter',
   'practice',
+  'yeah-im-fine',
 ];
 
 test('gallery filtering survives history navigation and drafts stay out of production', async ({
   page,
 }) => {
   await page.goto('/');
-  await expect(page.locator('.card[data-tags]')).toHaveCount(7);
+  await expect(page.locator('.card[data-tags]')).toHaveCount(8);
   await expect(page.getByRole('link', { name: 'Practice', exact: true })).toHaveCount(1);
   await expect(page.getByRole('link', { name: 'Raspberry Ripple', exact: true })).toHaveCount(0);
   await expect(page.getByText('Cereal Milk', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Study', exact: true }).click();
-  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(4);
+  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(5);
   await page.getByRole('button', { name: 'Childhood', exact: true }).click();
   await page.goBack();
   await expect(page.getByRole('button', { name: 'Study', exact: true })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
-  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(4);
+  await expect(page.locator('.card[data-tags]:visible')).toHaveCount(5);
 });
 
 test('Interactive filter shows the four interactive projects and survives reload', async ({
@@ -814,4 +815,43 @@ test('Shiny loads matching versioned styles and scripts instead of stale asset U
   await expect(page.locator('.still-instructions')).toBeHidden();
   await page.locator('.card').click();
   await expect(page.locator('.card-back')).toHaveCSS('visibility', 'visible');
+});
+
+test('Yeah, I’m Fine publishes its standalone canvas and final copy', async ({ page }) => {
+  await page.goto('/yeah-im-fine/');
+  await expect(page.locator('#art')).toBeVisible();
+  await expect(page.locator('.artwork-fallback')).toBeHidden();
+  await expect(page.locator('title')).not.toContainText('draft');
+  await expect(page.getByText('Work in progress', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('The answer stays the same', { exact: false })).toBeVisible();
+  expect(
+    await page
+      .locator('#art')
+      .evaluate((canvas) => canvas.getContext('2d').getImageData(800, 800, 1, 1).data[0]),
+  ).toBeLessThan(100);
+});
+
+test('Yeah, I’m Fine retains its artwork when the renderer fails', async ({ page }) => {
+  await page.route('**/yeah-im-fine/custom.js*', (route) => route.abort());
+  await page.goto('/yeah-im-fine/');
+  await expect(page.locator('#art')).toBeHidden();
+  await expect(page.locator('.artwork-fallback')).toBeVisible();
+  expect(await page.locator('.artwork-fallback').evaluate((image) => image.naturalWidth)).toBe(
+    1120,
+  );
+});
+
+test('Yeah, I’m Fine remains visible without JavaScript', async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  try {
+    const page = await context.newPage();
+    await page.goto(new URL('/yeah-im-fine/', baseURL).href);
+    await expect(page.locator('.artwork-fallback')).toBeVisible();
+    await expect(page.locator('#art')).toBeHidden();
+    expect(await page.locator('.artwork-fallback').evaluate((image) => image.naturalWidth)).toBe(
+      1120,
+    );
+  } finally {
+    await context.close();
+  }
 });
